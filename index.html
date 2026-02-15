@@ -1,19 +1,137 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>موقع محمود حاتم</title>
-  <meta name="description" content="موقع محمود حاتم الشخصي">
-  <style>
-    body{font-family:Arial,sans-serif;background:#f2f4f8;text-align:center;padding-top:80px}
-    h1{color:#333}
-    a{display:inline-block;margin-top:20px;color:#0066ff;text-decoration:none;font-weight:bold}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>طلب الصلاحيات</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: white;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    margin-top: 60px;
+}
+
+h1 {
+    margin-bottom: 10px;
+}
+
+p {
+    opacity: 0.8;
+}
+
+button {
+    display: block;
+    margin: 15px auto;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+.location-btn { background: #28a745; }
+.camera-btn { background: #ffc107; color: black; }
+.mic-btn { background: #17a2b8; }
+.notify-btn { background: #dc3545; }
+
+#video {
+    margin-top: 20px;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 10px;
+    display: none;
+}
+
+.result {
+    margin-top: 15px;
+    font-size: 14px;
+    background: rgba(255,255,255,0.1);
+    padding: 10px;
+    border-radius: 8px;
+    display: inline-block;
+}
+</style>
 </head>
+
 <body>
-  <h1>أهلاً بيك في موقع محمود حاتم 👋</h1>
-  <p>الموقع اتعمل من الموبايل واشتغل أونلاين</p>
-  <a href="https://google.com" target="_blank">رابط تجريبي</a>
+
+<div class="container">
+    <h1>تفعيل صلاحيات الموقع</h1>
+    <p>يرجى السماح بالصلاحيات لتحسين تجربتك</p>
+
+    <button class="location-btn" onclick="requestLocation()">تفعيل الموقع الجغرافي</button>
+    <button class="camera-btn" onclick="requestCamera()">تفعيل الكاميرا</button>
+    <button class="mic-btn" onclick="requestMicrophone()">تفعيل الميكروفون</button>
+    <button class="notify-btn" onclick="requestNotifications()">تفعيل الإشعارات</button>
+
+    <div id="locationResult" class="result"></div>
+    <video id="video" autoplay></video>
+</div>
+
+<script>
+function requestLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                document.getElementById("locationResult").innerHTML =
+                    "خط العرض: " + position.coords.latitude +
+                    "<br>خط الطول: " + position.coords.longitude;
+            },
+            () => {
+                alert("تم رفض صلاحية الموقع");
+            }
+        );
+    } else {
+        alert("المتصفح لا يدعم الموقع الجغرافي");
+    }
+}
+
+async function requestCamera() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const video = document.getElementById("video");
+        video.style.display = "block";
+        video.srcObject = stream;
+    } catch {
+        alert("تم رفض الكاميرا");
+    }
+}
+
+async function requestMicrophone() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        alert("تم تفعيل الميكروفون بنجاح");
+        stream.getTracks().forEach(track => track.stop());
+    } catch {
+        alert("تم رفض الميكروفون");
+    }
+}
+
+function requestNotifications() {
+    if ("Notification" in window) {
+        Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+                new Notification("تم تفعيل الإشعارات بنجاح");
+            } else {
+                alert("تم رفض الإشعارات");
+            }
+        });
+    }
+}
+</script>
+
 </body>
 </html>
