@@ -9,9 +9,7 @@
 
         :root {
             --gold: #FFD700;
-            --bg-black: #000;
-            --smoke-white: rgba(255, 255, 255, 0.15);
-            --smoke-gray: rgba(100, 100, 100, 0.2);
+            --bg-black: #050505;
         }
 
         body, html {
@@ -21,61 +19,62 @@
         }
 
         /* =========================================
-           تعديل الخلفية السينمائية (غيوم كثيفة بيضاء)
+           خلفية اختراق السحاب الأبيض الكثيف (Flight Effect)
            ========================================= */
         #background-fx { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             z-index: 1; pointer-events: none; overflow: hidden;
-            background: #000000; /* خلفية سوداء تماماً للتباين */
-        }
-        
-        .cloud-layer {
-            position: absolute; top: -100%; left: -100%; width: 300%; height: 300%;
-            background-image: url('https://www.transparenttextures.com/patterns/clouds.png'); /* استخدام باترن غيوم أوضح */
-            background-size: 1000px 1000px; /* تكبير الحجم للكثافة */
-            
-            /* السر هنا: جعل الغيوم بيضاء ساطعة وكثيفة */
-            filter: brightness(3) contrast(1.5) grayscale(100%); 
-            opacity: 0.7; /* شفافية عالية */
-            mix-blend-mode: screen; /* دمج الطبقات لتكوين بياض كثيف */
+            background: linear-gradient(to bottom, #1a1a1a, #000);
         }
 
-        /* الطبقة الأولى: حركة بطيئة وثقيلة */
-        .layer-1 {
-            animation: moveCloudsHeavy 90s linear infinite;
+        /* طبقات السحاب المتحركة للأمام */
+        .cloud-container {
+            position: absolute; width: 100%; height: 100%;
+            perspective: 500px;
         }
 
-        /* الطبقة الثانية: أعمق وأبطأ */
-        .layer-2 {
-            background-size: 1500px 1500px;
-            filter: brightness(2.5) contrast(1.5) grayscale(100%) blur(3px); /* ضبابية للعمق */
-            opacity: 0.5;
-            animation: moveCloudsHeavy 120s linear infinite reverse; /* اتجاه عكسي */
+        .cloud {
+            position: absolute;
+            width: 1200px; height: 1200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.2) 40%, transparent 70%);
+            background-image: url('https://www.transparenttextures.com/patterns/clouds.png');
+            filter: brightness(2) contrast(1.2) blur(10px);
+            opacity: 0;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.1);
+            animation: flyThrough 8s linear infinite;
         }
 
-        @keyframes moveCloudsHeavy {
-            from { transform: translate(0, 0) rotate(0deg); }
-            to { transform: translate(-200px, -100px) rotate(5deg); }
+        /* توزيع السحاب في أوقات مختلفة لضمان الكثافة */
+        .cloud:nth-child(1) { animation-delay: 0s; }
+        .cloud:nth-child(2) { animation-delay: 2s; }
+        .cloud:nth-child(3) { animation-delay: 4s; }
+        .cloud:nth-child(4) { animation-delay: 6s; }
+
+        @keyframes flyThrough {
+            0% { transform: translate(-50%, -50%) scale(0.1); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.5; }
+            100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
         }
 
-        /* ومضات البرق */
+        /* البرق (وميض السحاب) */
         .lightning-flash {
             position: absolute; top:0; left:0; width: 100%; height: 100%;
             background: #fff; opacity: 0; z-index: 5;
-            mix-blend-mode: overlay; /* دمج البرق مع الغيوم */
-            animation: erraticLightning 8s infinite;
+            mix-blend-mode: overlay;
+            animation: cloudLightning 6s infinite;
         }
 
-        @keyframes erraticLightning {
-            0%, 90%, 100% { opacity: 0; }
-            91% { opacity: 1; } /* ومضة قوية جداً */
-            91.5% { opacity: 0.3; }
-            92% { opacity: 0.6; }
-            93% { opacity: 0; }
+        @keyframes cloudLightning {
+            0%, 94%, 100% { opacity: 0; }
+            95% { opacity: 1; } 
+            96% { opacity: 0.2; }
+            97% { opacity: 0.8; }
+            98% { opacity: 0; }
         }
         /* ========================================= */
 
-        /* --- اللوجو النابض والدوار --- */
         .dynamic-logo {
             width: 150px; height: auto; margin-bottom: 20px;
             animation: rotate360 10s linear infinite, pulseGlow 3s ease-in-out infinite;
@@ -86,34 +85,31 @@
             50% { filter: drop-shadow(0 0 30px white); transform: scale(1.05); }
         }
 
-        /* اللوجو الصغير أعلى اليمين */
         .mini-logo-fixed {
             position: fixed; top: 20px; right: 20px; width: 50px; z-index: 100;
             filter: drop-shadow(0 0 10px white); display: none;
         }
 
-        /* --- باقي الكود كما هو بدون أي تغيير --- */
-        #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; opacity: 0.5; }
         .page { position: relative; z-index: 10; width: 100%; min-height: 100vh; display: none; flex-direction: column; align-items: center; padding: 40px 20px; box-sizing: border-box; }
         .active { display: flex; animation: fadeIn 0.8s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .splash-content { justify-content: space-between; height: 100vh; }
-        .store-name { font-size: 2rem; font-weight: 900; letter-spacing: 10px; text-shadow: 0 0 10px rgba(255,255,255,0.3); margin-top: 10px; }
+        .store-name { font-size: 2rem; font-weight: 900; letter-spacing: 10px; text-shadow: 0 0 15px white; margin-top: 10px; }
         .main-menu { display: flex; flex-direction: column; gap: 30px; text-align: center; }
         .menu-item { font-size: 1.5rem; letter-spacing: 8px; cursor: pointer; opacity: 0.7; transition: 0.3s; }
         .menu-item:hover { opacity: 1; text-shadow: 0 0 15px white; transform: scale(1.1); }
 
         .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; width: 100%; max-width: 1100px; margin-top: 40px; }
-        .product-card { background: rgba(255, 255, 255, 0.03); border-radius: 15px; padding: 20px; transition: 0.4s; cursor: pointer; text-align: center; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px); }
-        .product-card:hover { border-color: white; transform: translateY(-10px); }
+        .product-card { background: rgba(0, 0, 0, 0.4); border-radius: 15px; padding: 20px; transition: 0.4s; cursor: pointer; text-align: center; border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
+        .product-card:hover { border-color: white; transform: translateY(-10px); background: rgba(255, 255, 255, 0.05); }
         .img-box { width: 100%; aspect-ratio: 1/1; object-fit: contain; }
 
         .detail-container { display: flex; flex-wrap: wrap; gap: 50px; max-width: 1000px; width: 100%; margin-top: 50px; justify-content: center; align-items: center; }
-        .detail-img { flex: 1; min-width: 300px; max-width: 450px; aspect-ratio: 1/1; object-fit: contain; filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.4)); animation: floatImg 6s ease-in-out infinite; }
+        .detail-img { flex: 1; min-width: 300px; max-width: 450px; aspect-ratio: 1/1; object-fit: contain; filter: drop-shadow(0 0 30px white); animation: floatImg 6s ease-in-out infinite; }
         @keyframes floatImg { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-        .detail-info { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 20px; background: rgba(20, 20, 20, 0.6); padding: 30px; border-radius: 20px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); }
-        .btn-buy { background: white; color: black; padding: 16px; border: none; font-weight: bold; cursor: pointer; }
+        .detail-info { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 20px; background: rgba(0, 0, 0, 0.7); padding: 30px; border-radius: 20px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); }
+        .btn-buy { background: white; color: black; padding: 16px; border: none; font-weight: bold; cursor: pointer; letter-spacing: 2px; }
         .back-link { align-self: flex-start; cursor: pointer; color: white; margin-bottom: 20px; font-weight: bold; z-index: 5; }
         .footer-bar { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: auto; padding-bottom: 30px; width: 100%; }
         .social-bar { display: flex; gap: 25px; }
@@ -123,18 +119,20 @@
 <body>
 
     <div id="background-fx">
-        <div class="cloud-layer layer-1"></div>
-        <div class="cloud-layer layer-2"></div>
+        <div class="cloud-container">
+            <div class="cloud"></div>
+            <div class="cloud"></div>
+            <div class="cloud"></div>
+            <div class="cloud"></div>
+        </div>
         <div class="lightning-flash"></div>
     </div>
 
-    <canvas id="starfield"></canvas>
-    
-    <img src="" id="miniLogo" class="mini-logo-fixed">
+    <img src="https://i.ibb.co/XRTF1pS7/1000267202.png" id="miniLogo" class="mini-logo-fixed">
 
     <div id="splashPage" class="page splash-content active">
         <div style="text-align: center;">
-            <img src="" id="mainHeroLogo" class="dynamic-logo">
+            <img src="https://i.ibb.co/XRTF1pS7/1000267202.png" id="mainHeroLogo" class="dynamic-logo">
             <div class="store-name">X STORE</div>
         </div>
         <nav class="main-menu">
@@ -162,41 +160,18 @@
     </div>
 
     <script>
-        // ==========================================
-        //  رابط اللوجو الخاص بك
-        // ==========================================
-        const myLogoURL = "https://i.ibb.co/XRTF1pS7/1000267202.png"; 
-
-        // تطبيق اللوجو في الأماكن المحددة
-        document.getElementById('mainHeroLogo').src = myLogoURL;
-        document.getElementById('miniLogo').src = myLogoURL;
-
-        // ==========================================
-        //  بيانات المنتجات
-        // ==========================================
         const products = [
             { id: 1, name: "UNIVERSITY HOODIE", price: "999.00", img: "Picsart_26-02-14_16-25-30-082.png" },
             { id: 2, name: "RASPBERRY SWEAT", price: "850.00", img: "Picsart_26-02-14_16-25-05-041.png" },
             { id: 3, name: "NY BLACK EDITION", price: "999.00", img: "Picsart_26-02-14_16-24-39-633.png" },
-            { id: 4, name: "AMAZING OVERSIZE", price: "750.00", img: "Picsart_26-02-13_22-03-08-041.png" },
-            { id: 5, name: "VINTAGE WHITE", price: "900.00", img: "ضع_رابط_الصورة_هنا" },
-            { id: 6, name: "DARK SHADOW X", price: "1100.00", img: "ضع_رابط_الصورة_هنا" }
+            { id: 4, name: "AMAZING OVERSIZE", price: "750.00", img: "Picsart_26-02-13_22-03-08-041.png" }
         ];
 
         const whatsappNumber = "201000000000";
 
-        // إدارة التنقل والـ History
-        window.addEventListener('load', () => {
-            history.replaceState({page: 'splashPage'}, "", "#splashPage");
-        });
-
-        window.onpopstate = function(event) {
-            if (event.state && event.state.page) {
-                renderPage(event.state.page);
-            } else {
-                renderPage('splashPage');
-            }
-        };
+        // إدارة التنقل
+        window.addEventListener('load', () => history.replaceState({page: 'splashPage'}, "", "#splashPage"));
+        window.onpopstate = (e) => renderPage(e.state ? e.state.page : 'splashPage');
 
         function navigateTo(pageId) {
             history.pushState({page: pageId}, "", "#" + pageId);
@@ -206,64 +181,32 @@
         function renderPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
-            
-            // إظهار اللوجو المصغر في الصفحات الداخلية فقط
-            const miniLogo = document.getElementById('miniLogo');
-            miniLogo.style.display = (pageId === 'splashPage') ? 'none' : 'block';
+            document.getElementById('miniLogo').style.display = (pageId === 'splashPage') ? 'none' : 'block';
             window.scrollTo(0,0);
         }
 
-        // بناء شبكة المنتجات
+        // بناء الشبكة
         const grid = document.getElementById('productsGrid');
         products.forEach(p => {
             const card = document.createElement('div');
             card.className = 'product-card';
             card.onclick = () => openProduct(p);
-            card.innerHTML = `
-                <img src="${p.img}" class="img-box" onerror="this.src='https://placehold.co/400x400/111/444?text=Product'">
-                <div style="margin-top:15px; font-weight:bold;">${p.name}</div>
-                <div style="color:#ccc; margin-top:5px;">LE ${p.price}</div>
-            `;
+            card.innerHTML = `<img src="${p.img}" class="img-box" onerror="this.src='https://placehold.co/400'"><div style="margin-top:15px; font-weight:bold;">${p.name}</div><div style="color:#ccc; margin-top:5px;">LE ${p.price}</div>`;
             grid.appendChild(card);
         });
 
         function openProduct(product) {
             const detailBox = document.getElementById('productDetailContent');
             detailBox.innerHTML = `
-                <img src="${product.img}" class="detail-img" onerror="this.src='https://placehold.co/400x400/111/444?text=Product'">
+                <img src="${product.img}" class="detail-img">
                 <div class="detail-info">
-                    <h1 style="letter-spacing:3px; color:white;">${product.name}</h1>
-                    <div class="price-tag">LE ${product.price} EGP</div>
-                    <p style="color:#ccc; font-size:0.9rem; font-family:sans-serif;">High-end streetwear fabric, handcrafted for X STORE. Exclusive limited drop.</p>
-                    <div class="action-btns">
-                        <button class="btn-buy" onclick="window.open('https://wa.me/${whatsappNumber}')">BUY NOW (WHATSAPP)</button>
-                    </div>
-                </div>
-            `;
+                    <h1>${product.name}</h1>
+                    <div style="font-size:1.8rem; font-weight:bold;">LE ${product.price} EGP</div>
+                    <p style="color:#ccc;">High-end streetwear fabric, handcrafted for X STORE.</p>
+                    <button class="btn-buy" onclick="window.open('https://wa.me/${whatsappNumber}')">BUY NOW (WHATSAPP)</button>
+                </div>`;
             navigateTo('productDetailPage');
         }
-
-        // كود النجوم
-        const canvas = document.getElementById('starfield');
-        const ctx = canvas.getContext('2d');
-        let stars = [];
-        function initStars() {
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            stars = [];
-            for(let i=0; i<400; i++) stars.push({ x: Math.random()*canvas.width-canvas.width/2, y: Math.random()*canvas.height-canvas.height/2, z: Math.random()*canvas.width, o: Math.random() });
-        }
-        function drawStars() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for(let s of stars) {
-                s.z -= 3; if (s.z <= 0) s.z = canvas.width;
-                let x = (s.x / s.z) * canvas.width + canvas.width/2;
-                let y = (s.y / s.z) * canvas.height + canvas.height/2;
-                let r = (1 - s.z/canvas.width) * 2;
-                ctx.beginPath(); ctx.fillStyle = `rgba(255, 255, 255, ${s.o})`; ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
-            }
-            requestAnimationFrame(drawStars);
-        }
-        window.addEventListener('resize', initStars); initStars(); drawStars();
     </script>
 </body>
 </html>
