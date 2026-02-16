@@ -1,272 +1,246 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>X STORE | Official Experience</title>
+    <title>X STORE | Premium Experience</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Cairo:wght@400;700&display=swap');
 
         :root {
             --gold: #FFD700;
-            --bg-black: #000;
-            --smoke-white: rgba(255, 255, 255, 0.15);
-            --smoke-gray: rgba(100, 100, 100, 0.2);
+            --bg-dark: #020202;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
 
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: var(--bg-black); font-family: 'Orbitron', sans-serif;
+            background-color: var(--bg-dark); 
+            font-family: 'Orbitron', 'Cairo', sans-serif;
             color: white; overflow-x: hidden; scroll-behavior: smooth;
         }
 
-        /* --- تم استبدال #starfield بهذا الكود الجديد للخلفية الغائمة --- */
-        #main-clouds {
+        /* --- خلفية الغيوم الكثيفة المتحركة --- */
+        .cloud-background {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: 1; pointer-events: none; overflow: hidden;
-            background: #080808; /* خلفية داكنة جداً لتباين الغيوم */
-            transition: opacity 0.8s ease;
+            background: radial-gradient(circle at center, #0a0a0a 0%, #000 100%);
         }
-        .m-cloud {
-            position: absolute; border-radius: 50%;
-            filter: blur(60px); opacity: 0.3; /* كثافة الغيوم */
-            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(200,200,200,0.1) 60%, transparent 100%);
-            animation: mainDrift infinite alternate ease-in-out;
-        }
-        .mc-1 { top: -20%; left: -10%; width: 70vw; height: 60vw; animation-duration: 40s; }
-        .mc-2 { bottom: -30%; right: -20%; width: 80vw; height: 70vw; animation-duration: 50s; animation-direction: alternate-reverse; opacity: 0.25; }
-        .mc-3 { top: 40%; left: 50%; width: 50vw; height: 50vw; animation-duration: 35s; opacity: 0.2; }
-        
-        @keyframes mainDrift {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(40px, 30px) scale(1.05); }
-        }
-        /* --------------------------------------------------------- */
 
+        .cloud {
+            position: absolute; border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 70%);
+            filter: blur(60px); animation: drift linear infinite;
+        }
+
+        .c1 { width: 600px; height: 600px; top: -10%; left: -10%; animation-duration: 30s; }
+        .c2 { width: 800px; height: 800px; bottom: -20%; right: -10%; animation-duration: 45s; opacity: 0.6; }
+        .c3 { width: 500px; height: 500px; top: 40%; left: 30%; animation-duration: 25s; opacity: 0.4; }
+
+        @keyframes drift {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(40px, 40px) scale(1.1); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        /* --- تنسيق الصفحات --- */
         .page {
             position: relative; z-index: 10; width: 100%; min-height: 100vh;
             display: none; flex-direction: column; align-items: center; padding: 40px 20px;
             box-sizing: border-box;
         }
+        .active { display: flex; animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        .active { display: flex; animation: fadeIn 0.8s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- الواجهة الرئيسية --- */
-        .splash-content { justify-content: space-between; height: 100vh; }
-        .store-name { font-size: 2rem; font-weight: 900; letter-spacing: 10px; text-shadow: 0 0 10px rgba(255,255,255,0.3); margin-top: 10px; }
-        .main-menu { display: flex; flex-direction: column; gap: 30px; text-align: center; }
-        .menu-item { font-size: 1.5rem; letter-spacing: 8px; cursor: pointer; opacity: 0.7; transition: 0.3s; }
-        .menu-item:hover { opacity: 1; text-shadow: 0 0 15px white; transform: scale(1.1); }
-
-        /* --- شبكة المنتجات --- */
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; width: 100%; max-width: 1100px; margin-top: 40px; }
-        .product-card {
-            background: rgba(255, 255, 255, 0.03); border-radius: 15px; padding: 20px; transition: 0.4s; cursor: pointer; text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px);
+        .splash-content { justify-content: center; gap: 60px; height: 100vh; }
+        .store-name { font-size: 3rem; font-weight: 900; letter-spacing: 12px; text-shadow: 0 0 20px rgba(255,255,255,0.2); }
+        .main-menu { display: flex; flex-direction: column; gap: 20px; }
+        .menu-item { 
+            font-size: 1.2rem; letter-spacing: 5px; cursor: pointer; opacity: 0.6; 
+            transition: 0.4s; padding: 10px 30px; border: 1px solid transparent;
         }
-        .product-card:hover { border-color: white; transform: translateY(-10px); box-shadow: 0 0 30px rgba(255, 255, 255, 0.1); }
-        .img-box { width: 100%; aspect-ratio: 1/1; object-fit: contain; filter: drop-shadow(0 0 10px rgba(255,255,255,0.3)); transition: 0.3s; }
-        .product-card:hover .img-box { filter: drop-shadow(0 0 20px white); }
+        .menu-item:hover { 
+            opacity: 1; color: var(--gold); border-bottom: 1px solid var(--gold);
+            transform: letter-spacing: 8px;
+        }
 
-        /* --- خلفية الدخان لصفحة المنتج --- */
-        #productDetailPage { background: #000; overflow: hidden; }
-        .smoke-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; background: black; }
-        .smoke-blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.6; animation: drift 15s infinite alternate ease-in-out; }
-        .sb-1 { top: -20%; left: -20%; width: 70vw; height: 70vw; background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0) 70%); animation-duration: 25s; }
-        .sb-2 { bottom: -20%; right: -20%; width: 80vw; height: 80vw; background: radial-gradient(circle, rgba(100,100,100,0.2) 0%, rgba(0,0,0,0) 70%); animation-duration: 30s; animation-direction: alternate-reverse; }
-        .sb-3 { top: 30%; left: 30%; width: 40vw; height: 40vw; background: radial-gradient(circle, rgba(200,200,200,0.1) 0%, rgba(0,0,0,0) 60%); animation-duration: 20s; }
-        @keyframes drift { 0% { transform: translate(0, 0) scale(1); } 33% { transform: translate(50px, -50px) scale(1.1); } 66% { transform: translate(-30px, 40px) scale(0.9); } 100% { transform: translate(20px, 20px) scale(1); } }
+        /* --- شبكة المنتجات المتميزة --- */
+        .products-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 30px; width: 100%; max-width: 1200px; margin-top: 50px; 
+        }
+        .product-card {
+            background: var(--glass); border-radius: 20px; padding: 20px; 
+            transition: 0.5s all ease; cursor: pointer; text-align: center;
+            border: 1px solid var(--glass-border); backdrop-filter: blur(10px);
+            position: relative; overflow: hidden;
+        }
+        .product-card::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            transition: 0.5s;
+        }
+        .product-card:hover::before { left: 100%; }
+        .product-card:hover { border-color: var(--gold); transform: translateY(-10px); background: rgba(255,255,255,0.05); }
+        
+        .img-box { 
+            width: 100%; aspect-ratio: 1/1; object-fit: contain; 
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+            transition: 0.5s; 
+        }
+        .product-card:hover .img-box { transform: scale(1.05); }
 
-        /* تفاصيل المنتج */
-        .detail-container { display: flex; flex-wrap: wrap; gap: 50px; max-width: 1000px; width: 100%; margin-top: 50px; justify-content: center; align-items: center; position: relative; z-index: 2; }
-        .detail-img { flex: 1; min-width: 300px; max-width: 450px; aspect-ratio: 1/1; object-fit: contain; filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.4)); animation: floatImg 6s ease-in-out infinite; }
-        @keyframes floatImg { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-        .detail-info { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 20px; background: rgba(20, 20, 20, 0.6); padding: 30px; border-radius: 20px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 0 40px rgba(0,0,0,0.5); }
-        .price-tag { font-size: 1.8rem; color: white; font-weight: bold; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
-        .size-selector { display: flex; gap: 10px; }
-        .size-btn { border: 1px solid #555; padding: 10px 18px; cursor: pointer; transition: 0.3s; color: #ccc; }
-        .size-btn.selected, .size-btn:hover { border-color: white; background: white; color: black; box-shadow: 0 0 15px rgba(255,255,255,0.4); }
-        .qty-input { background: none; border: 1px solid #555; color: white; padding: 10px; width: 60px; text-align: center; }
-        .action-btns { display: flex; flex-direction: column; gap: 15px; }
-        .btn-buy { background: white; color: black; padding: 16px; border: none; font-weight: bold; cursor: pointer; letter-spacing: 2px; transition: 0.3s; }
-        .btn-buy:hover { background: #ddd; box-shadow: 0 0 25px rgba(255,255,255,0.3); transform: scale(1.02); }
-        .btn-cart { background: none; color: white; border: 1px solid rgba(255,255,255,0.3); padding: 16px; cursor: pointer; transition: 0.3s; }
-        .btn-cart:hover { border-color: white; background: rgba(255,255,255,0.05); }
+        /* --- صفحة التفاصيل الاحترافية --- */
+        .detail-container { 
+            display: flex; flex-wrap: wrap; gap: 40px; max-width: 1100px; 
+            width: 100%; margin-top: 30px; justify-content: center; 
+        }
+        .detail-info { 
+            flex: 1; min-width: 320px; background: rgba(10,10,10,0.8); 
+            padding: 40px; border-radius: 30px; border: 1px solid var(--glass-border);
+        }
+        .size-btn { 
+            border: 1px solid #333; padding: 12px 20px; cursor: pointer; 
+            transition: 0.3s; color: #888; border-radius: 8px;
+        }
+        .size-btn.selected { background: var(--gold); color: black; border-color: var(--gold); font-weight: bold; }
 
-        .back-link { align-self: flex-start; cursor: pointer; color: white; margin-bottom: 20px; font-weight: bold; z-index: 5; opacity: 0.7; }
-        .back-link:hover { opacity: 1; text-shadow: 0 0 10px white; }
+        .btn-buy { 
+            background: white; color: black; padding: 20px; border: none; 
+            font-weight: 900; cursor: pointer; width: 100%; border-radius: 12px;
+            transition: 0.3s; font-family: 'Orbitron';
+        }
+        .btn-buy:hover { background: var(--gold); transform: scale(1.02); box-shadow: 0 10px 20px rgba(255,215,0,0.2); }
 
-        .footer-bar { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: auto; padding-bottom: 30px; width: 100%; }
-        .social-bar { display: flex; gap: 25px; }
-        .social-link svg { width: 22px; fill: white; opacity: 0.6; transition: 0.3s; }
-        .social-link:hover svg { opacity: 1; filter: drop-shadow(0 0 8px white); }
+        .back-link { 
+            align-self: flex-start; cursor: pointer; margin-bottom: 30px; 
+            font-weight: bold; opacity: 0.5; transition: 0.3s;
+        }
+        .back-link:hover { opacity: 1; color: var(--gold); }
     </style>
 </head>
 <body>
 
-    <div id="main-clouds">
-        <div class="m-cloud mc-1"></div>
-        <div class="m-cloud mc-2"></div>
-        <div class="m-cloud mc-3"></div>
+    <div class="cloud-background">
+        <div class="cloud c1"></div>
+        <div class="cloud c2"></div>
+        <div class="cloud c3"></div>
     </div>
 
     <div id="splashPage" class="page splash-content active">
         <div style="text-align: center;">
-            <svg width="100" height="100" viewBox="0 0 200 200" id="logoContainer">
-                <g id="logo-mesh" stroke="white" stroke-width="15" fill="none" style="filter: drop-shadow(0 0 10px white);">
-                    <path d="M50,150 L150,50" /><path d="M150,150 L50,50" />
+            <svg width="120" height="120" viewBox="0 0 200 200" id="logoContainer" style="cursor: move;">
+                <g id="logo-mesh" stroke="white" stroke-width="12" fill="none">
+                    <circle cx="100" cy="100" r="80" stroke="rgba(255,215,0,0.2)" stroke-width="2"/>
+                    <path d="M60,140 L140,60" stroke-linecap="round" />
+                    <path d="M140,140 L60,60" stroke-linecap="round" />
                 </g>
             </svg>
             <div class="store-name">X STORE</div>
         </div>
         <nav class="main-menu">
-            <div class="menu-item" onclick="navigateTo('catalogPage')">HOME</div>
-            <div class="menu-item" onclick="navigateTo('catalogPage')">CATALOG</div>
-            <div class="menu-item">CONTACT</div>
+            <div class="menu-item" onclick="navigateTo('catalogPage')">BROWSE COLLECTIONS</div>
+            <div class="menu-item">INSTAGRAM</div>
         </nav>
-        <div class="footer-bar">
-            <div class="social-bar">
-                <a href="https://www.instagram.com/xce____7oda__x?igsh=cmI5aXd4OHp1cDhl" target="_blank" class="social-link"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.069-4.85.069-3.204 0-3.584-.012-4.849-.069-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
-                <a href="https://www.tiktok.com/@628..2?_r=1&_t=ZS-93ujRpfUhj2" target="_blank" class="social-link"><svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.65-1.55-1.09-.01 2.83.03 5.66-.02 8.5-.16 2.61-2.14 4.86-4.73 5.37-2.67.55-5.5-1.09-6.18-3.69-.69-2.58 1.25-5.22 3.93-5.32v4.02c-1.23-.05-2.26 1.18-2.03 2.43.21 1.16 1.47 1.83 2.52 1.46 1.15-.36 1.84-1.58 1.68-2.78-.05-4.46-.02-8.91-.03-13.37-.01-1.63-.01-3.26-.01-4.89-.84.23-1.69.45-2.54.67-.01-.13-.02-.27-.03-.4 1.05-.29 2.1-.58 3.16-.89z"/></svg></a>
-            </div>
-        </div>
     </div>
 
     <div id="catalogPage" class="page">
-        <div class="back-link" onclick="history.back()">← BACK</div>
-        <div class="store-name" style="font-size: 1.5rem;">COLLECTIONS</div>
+        <div class="back-link" onclick="history.back()">← RETURN TO HOME</div>
+        <h2 style="letter-spacing: 5px; color: var(--gold);">CURATED PIECES</h2>
         <div class="products-grid" id="productsGrid"></div>
     </div>
 
     <div id="productDetailPage" class="page">
-        <div class="smoke-container">
-            <div class="smoke-blob sb-1"></div>
-            <div class="smoke-blob sb-2"></div>
-            <div class="smoke-blob sb-3"></div>
-        </div>
-        <div class="back-link" onclick="history.back()">← BACK</div>
+        <div class="back-link" onclick="history.back()">← BACK TO CATALOG</div>
         <div class="detail-container" id="productDetailContent"></div>
     </div>
 
     <script>
-        // ==========================================
-        //  بيانات المنتجات (كما هي 6 فقط)
-        // ==========================================
         const products = [
             { id: 1, name: "UNIVERSITY HOODIE", price: "999.00", img: "Picsart_26-02-14_16-25-30-082.png" },
             { id: 2, name: "RASPBERRY SWEAT", price: "850.00", img: "Picsart_26-02-14_16-25-05-041.png" },
             { id: 3, name: "NY BLACK EDITION", price: "999.00", img: "Picsart_26-02-14_16-24-39-633.png" },
             { id: 4, name: "AMAZING OVERSIZE", price: "750.00", img: "Picsart_26-02-13_22-03-08-041.png" },
-            { id: 5, name: "VINTAGE WHITE", price: "900.00", img: "ضع_رابط_الصورة_هنا" },
-            { id: 6, name: "DARK SHADOW X", price: "1100.00", img: "ضع_رابط_الصورة_هنا" }
+            { id: 5, name: "VINTAGE WHITE", price: "900.00", img: "https://placehold.co/600x600/0a0a0a/ffffff?text=X+STORE+VINTAGE" },
+            { id: 6, name: "DARK SHADOW X", price: "1100.00", img: "https://placehold.co/600x600/0a0a0a/ffffff?text=X+STORE+SHADOW" }
         ];
 
         const whatsappNumber = "201000000000";
 
-        // 1. إدارة التنقل والـ History (كما هي)
-        window.addEventListener('load', () => {
-            history.replaceState({page: 'splashPage'}, "", "#splashPage");
-        });
-
-        window.onpopstate = function(event) {
-            if (event.state && event.state.page) {
-                renderPage(event.state.page);
-            } else {
-                renderPage('splashPage');
-            }
-        };
-
+        // التنقل الاحترافي
         function navigateTo(pageId) {
             history.pushState({page: pageId}, "", "#" + pageId);
             renderPage(pageId);
         }
 
+        window.onpopstate = (e) => renderPage(e.state ? e.state.page : 'splashPage');
+
         function renderPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            
-            // التحكم في خلفية الغيوم الرئيسية
-            // نخفيها عند الدخول لصفحة المنتج لأنها تحتوي على دخان خاص بها
-            const mainClouds = document.getElementById('main-clouds');
-            if(pageId === 'productDetailPage'){
-                mainClouds.style.opacity = '0';
-            } else {
-                mainClouds.style.opacity = '1';
-            }
+            const target = document.getElementById(pageId);
+            if(target) target.classList.add('active');
             window.scrollTo(0,0);
         }
 
-        // 2. بناء شبكة المنتجات (كما هي)
+        // بناء المنتجات
         const grid = document.getElementById('productsGrid');
         products.forEach(p => {
             const card = document.createElement('div');
             card.className = 'product-card';
             card.onclick = () => openProduct(p);
             card.innerHTML = `
-                <img src="${p.img}" class="img-box" onerror="this.src='https://placehold.co/400x400/111/444?text=Product'">
-                <div style="margin-top:15px; font-weight:bold;">${p.name}</div>
-                <div style="color:#ccc; margin-top:5px;">LE ${p.price}</div>
+                <img src="${p.img}" class="img-box" loading="lazy">
+                <div style="margin-top:20px; font-weight:700; letter-spacing:1px;">${p.name}</div>
+                <div style="color:var(--gold); margin-top:8px; font-size:0.9rem;">EGP ${p.price}</div>
             `;
             grid.appendChild(card);
         });
 
-        // فتح صفحة المنتج (كما هي)
         function openProduct(product) {
             const detailBox = document.getElementById('productDetailContent');
             detailBox.innerHTML = `
-                <img src="${product.img}" class="detail-img" onerror="this.src='https://placehold.co/400x400/111/444?text=Product'">
+                <img src="${product.img}" class="detail-img" style="width:100%; max-width:450px; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.8));">
                 <div class="detail-info">
-                    <h1 style="letter-spacing:3px; color:white;">${product.name}</h1>
-                    <div class="price-tag">LE ${product.price} EGP</div>
-                    <p style="color:#ccc; font-size:0.9rem; font-family:sans-serif;">High-end streetwear fabric, handcrafted for X STORE. Exclusive limited drop.</p>
-                    <div>
-                        <span style="font-size:0.7rem; color:#aaa;">SIZE:</span>
-                        <div class="size-selector">
+                    <h1 style="margin:0; letter-spacing:2px;">${product.name}</h1>
+                    <div style="font-size:2rem; margin:20px 0; color:var(--gold);">EGP ${product.price}</div>
+                    <p style="color:#888; line-height:1.8; font-family:'Cairo';">قطعة حصرية مصممة بعناية من متجر X. نسيج قطني فاخر وقصة مريحة تناسب ذوقك الرفيع.</p>
+                    <div style="margin:25px 0;">
+                        <p style="font-size:0.7rem; color:#555; margin-bottom:10px;">AVAILABLE SIZES:</p>
+                        <div style="display:flex; gap:10px;">
                             <div class="size-btn" onclick="selectSize(this)">S</div>
                             <div class="size-btn selected" onclick="selectSize(this)">M</div>
                             <div class="size-btn" onclick="selectSize(this)">L</div>
                             <div class="size-btn" onclick="selectSize(this)">XL</div>
                         </div>
                     </div>
-                    <div>
-                        <span style="font-size:0.7rem; color:#aaa;">QTY:</span><br>
-                        <input type="number" class="qty-input" id="qtyInput" value="1" min="1">
-                    </div>
-                    <div class="action-btns">
-                        <button class="btn-buy" onclick="buyNow('${product.name}', '${product.price}')">BUY NOW (WHATSAPP)</button>
-                        <button class="btn-cart">ADD TO CART</button>
-                    </div>
+                    <button class="btn-buy" onclick="buyNow('${product.name}', '${product.price}')">PROCEED TO WHATSAPP</button>
                 </div>
             `;
             navigateTo('productDetailPage');
         }
 
-        function buyNow(name, price) {
-            const size = document.querySelector('.size-btn.selected').innerText;
-            const qty = document.getElementById('qtyInput').value;
-            const msg = `Order from X STORE:%0AItem: ${name}%0APrice: ${price}%0ASize: ${size}%0AQty: ${qty}`;
-            window.open(`https://wa.me/${whatsappNumber}?text=${msg}`, '_blank');
-        }
-
         function selectSize(btn) {
-            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+            btn.parentElement.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');
         }
 
-        // تحريك اللوجو (كما هو)
-        const container = document.getElementById('logoContainer');
-        const mesh = document.getElementById('logo-mesh');
-        let isDown = false; let startX, startY;
-        const start = (e) => { isDown = true; startX = (e.pageX || e.touches[0].pageX); startY = (e.pageY || e.touches[0].pageY); mesh.style.transition = "none"; };
-        const move = (e) => { if(!isDown) return; let x = (e.pageX || e.touches[0].pageX); let y = (e.pageY || e.touches[0].pageY);
-            let rotY = (x - startX) * 0.5; let rotX = (startY - y) * 0.5;
-            mesh.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`; };
-        const end = () => { isDown = false; mesh.style.transition = "transform 0.8s ease"; mesh.style.transform = `rotateX(0deg) rotateY(0deg)`; };
-        container.addEventListener('mousedown', start); window.addEventListener('mousemove', move); window.addEventListener('mouseup', end);
-        container.addEventListener('touchstart', start); window.addEventListener('touchmove', move); window.addEventListener('touchend', end);
-        
-        // تم حذف كود رسم النجوم (canvas) نهائياً
+        function buyNow(name, price) {
+            const size = document.querySelector('.size-btn.selected').innerText;
+            const msg = `Hello X STORE, I want to order:\n- Item: ${name}\n- Price: ${price}\n- Size: ${size}`;
+            window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        // تحريك اللوجو التفاعلي
+        const logo = document.getElementById('logo-mesh');
+        document.addEventListener('mousemove', (e) => {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            logo.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+        });
     </script>
 </body>
 </html>
