@@ -3,144 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>X STORE | Dynamic Clouds</title>
+    <title>X STORE | Space Edition</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
 
-        :root {
-            --bg-dark: #050505;
-            --cloud-white: rgba(255, 255, 255, 0.12);
-        }
-
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: var(--bg-dark); font-family: 'Orbitron', sans-serif;
-            color: white; overflow-x: hidden;
+            background-color: #000; font-family: 'Orbitron', sans-serif;
+            color: white; overflow: hidden;
         }
 
-        /* --- الخلفية الديناميكية (الغيوم الكثيفة) --- */
-        .dynamic-cloud-system {
+        /* --- خلفية النجوم (نفس الفيديو) --- */
+        #starfield {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1; overflow: hidden; background: black;
+            z-index: 1; pointer-events: none;
         }
 
-        /* محاكاة شعاع الضوء الذي في الصورة */
-        .light-ray {
-            position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-            width: 300px; height: 100%;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.08) 0%, transparent 80%);
-            filter: blur(50px); z-index: 2;
+        /* --- شاشة التحميل والدوار (Loader) --- */
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: black; z-index: 9999; display: flex; justify-content: center; align-items: center;
+            transition: opacity 0.6s ease;
         }
-
-        .cloud-layer {
-            position: absolute; width: 200%; height: 200%;
-            background-image: 
-                radial-gradient(circle at 50% 50%, var(--cloud-white) 0%, transparent 40%),
-                radial-gradient(circle at 20% 30%, rgba(255,255,255,0.08) 0%, transparent 30%),
-                radial-gradient(circle at 80% 70%, rgba(255,255,255,0.1) 0%, transparent 35%);
-            filter: blur(80px);
-            animation: cloudMovement 60s linear infinite;
+        .spiral-loader {
+            width: 60px; height: 60px;
+            background: url('https://cdn-icons-png.flaticon.com/512/5903/5903939.png'); /* أيقونة حلزونية تشبه الفيديو */
+            background-size: contain;
+            filter: invert(1);
+            animation: rotateSpiral 1.2s linear infinite;
         }
+        @keyframes rotateSpiral { to { transform: rotate(360deg); } }
 
-        .layer-2 {
-            animation: cloudMovement 90s linear infinite reverse;
-            opacity: 0.6;
-        }
-
-        @keyframes cloudMovement {
-            0% { transform: translate(-25%, -25%) rotate(0deg); }
-            50% { transform: translate(-10%, -10%) rotate(2deg); }
-            100% { transform: translate(-25%, -25%) rotate(0deg); }
-        }
-
-        /* --- باقي تنسيقات الموقع الأساسية --- */
+        /* --- محتوى الصفحات --- */
         .page {
-            position: relative; z-index: 10; width: 100%; min-height: 100vh;
-            display: none; flex-direction: column; align-items: center; padding: 40px 20px;
-            box-sizing: border-box;
+            position: relative; z-index: 10; display: none;
+            flex-direction: column; align-items: center; padding: 60px 20px;
+            height: 100vh; justify-content: center; box-sizing: border-box;
         }
-        .active { display: flex; animation: fadeIn 0.8s ease; }
+        .active { display: flex; animation: zoomIn 0.8s ease forwards; }
 
-        .store-name { font-size: 2.5rem; font-weight: 900; letter-spacing: 12px; margin-top: 20px; text-align: center; text-shadow: 0 0 20px rgba(255,255,255,0.5); }
-        .main-menu { display: flex; flex-direction: column; gap: 30px; text-align: center; margin-top: 50px; }
-        .menu-item { font-size: 1.5rem; letter-spacing: 8px; cursor: pointer; opacity: 0.7; transition: 0.4s; }
-        .menu-item:hover { opacity: 1; color: #fff; transform: scale(1.1); text-shadow: 0 0 15px white; }
-
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; width: 100%; max-width: 1100px; margin-top: 40px; }
-        .product-card {
-            background: rgba(255, 255, 255, 0.03); border-radius: 15px; padding: 20px; transition: 0.4s; cursor: pointer; text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
-        .product-card:hover { border-color: white; transform: translateY(-5px); }
-        .img-box { width: 100%; aspect-ratio: 1/1; object-fit: contain; }
 
-        .back-link { align-self: flex-start; cursor: pointer; margin-bottom: 20px; font-weight: bold; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .nav-menu { display: flex; flex-direction: column; gap: 30px; text-align: center; }
+        .nav-item { 
+            font-size: 1.2rem; letter-spacing: 8px; cursor: pointer; 
+            opacity: 0.6; transition: 0.4s; position: relative;
+        }
+        .nav-item:hover { opacity: 1; letter-spacing: 12px; }
+
+        /* شبكة المنتجات */
+        .grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px; width: 100%; max-width: 1100px; padding-top: 50px;
+            overflow-y: auto; padding-bottom: 50px;
+        }
+        .card {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 15px; padding: 20px; backdrop-filter: blur(5px);
+            transition: 0.5s; text-align: center; cursor: pointer;
+        }
+        .card:hover { transform: translateY(-10px); border-color: white; }
+        .card img { width: 100%; border-radius: 10px; }
+
+        .back-btn { position: absolute; top: 40px; left: 40px; cursor: pointer; opacity: 0.5; font-size: 0.8rem; letter-spacing: 2px; }
+        .back-btn:hover { opacity: 1; }
     </style>
 </head>
 <body>
 
-    <div class="dynamic-cloud-system">
-        <div class="light-ray"></div>
-        <div class="cloud-layer"></div>
-        <div class="cloud-layer layer-2"></div>
+    <canvas id="starfield"></canvas>
+
+    <div id="loader">
+        <div class="spiral-loader"></div>
     </div>
 
-    <div id="splashPage" class="page active">
-        <div style="text-align: center; margin-top: 10vh;">
-            <svg width="100" height="100" viewBox="0 0 200 200">
-                <path d="M50,150 L150,50 M150,150 L50,50" stroke="white" stroke-width="15" fill="none" />
-            </svg>
-            <div class="store-name">X STORE</div>
+    <div id="home" class="page active">
+        <div class="spiral-loader" style="margin-bottom: 40px; animation-duration: 4s;"></div>
+        <div class="nav-menu">
+            <div class="nav-item" onclick="changePage('catalog')">HOME</div>
+            <div class="nav-item" onclick="changePage('catalog')">CATALOG</div>
+            <div class="nav-item">CONTACT</div>
         </div>
-        <nav class="main-menu">
-            <div class="menu-item" onclick="navigateTo('catalogPage')">HOME</div>
-            <div class="menu-item" onclick="navigateTo('catalogPage')">CATALOG</div>
-            <div class="menu-item">CONTACT</div>
-        </nav>
     </div>
 
-    <div id="catalogPage" class="page">
-        <div class="back-link" onclick="history.back()">← BACK</div>
-        <div class="store-name" style="font-size: 1.5rem;">COLLECTIONS</div>
-        <div class="products-grid" id="productsGrid"></div>
+    <div id="catalog" class="page" style="justify-content: flex-start;">
+        <div class="back-btn" onclick="changePage('home')">← RETURN</div>
+        <div class="grid" id="productGrid"></div>
     </div>
 
     <script>
+        // --- 1. كود النجوم المتحركة (الستايل الفضائي) ---
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+
+        function initStars() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            stars = [];
+            for (let i = 0; i < 400; i++) {
+                stars.push({
+                    x: Math.random() * canvas.width - canvas.width / 2,
+                    y: Math.random() * canvas.height - canvas.height / 2,
+                    z: Math.random() * canvas.width,
+                    o: Math.random()
+                });
+            }
+        }
+
+        function updateStars() {
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            for (let s of stars) {
+                s.z -= 2; // سرعة الحركة نحوك
+                if (s.z <= 0) s.z = canvas.width;
+                
+                let x = (s.x / s.z) * canvas.width + canvas.width / 2;
+                let y = (s.y / s.z) * canvas.height + canvas.height / 2;
+                let r = (1 - s.z / canvas.width) * 2;
+                
+                ctx.beginPath();
+                ctx.fillStyle = `rgba(255, 255, 255, ${s.o})`;
+                ctx.arc(x, y, r, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            requestAnimationFrame(updateStars);
+        }
+
+        window.addEventListener('resize', initStars);
+        initStars();
+        updateStars();
+
+        // --- 2. إدارة الانتقالات (Loader) ---
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => document.getElementById('loader').style.display = 'none', 600);
+            }, 1000);
+        });
+
+        function changePage(pageId) {
+            const loader = document.getElementById('loader');
+            loader.style.display = 'flex';
+            loader.style.opacity = '1';
+
+            setTimeout(() => {
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById(pageId).classList.add('active');
+                loader.style.opacity = '0';
+                setTimeout(() => loader.style.display = 'none', 600);
+            }, 800);
+        }
+
+        // --- 3. بيانات المنتجات ---
         const products = [
-            { id: 1, name: "UNIVERSITY HOODIE", price: "999.00", img: "Picsart_26-02-14_16-25-30-082.png" },
-            { id: 2, name: "RASPBERRY SWEAT", price: "850.00", img: "Picsart_26-02-14_16-25-05-041.png" },
-            { id: 3, name: "NY BLACK EDITION", price: "999.00", img: "Picsart_26-02-14_16-24-39-633.png" },
-            { id: 4, name: "AMAZING OVERSIZE", price: "750.00", img: "Picsart_26-02-13_22-03-08-041.png" },
-            { id: 5, name: "VINTAGE WHITE", price: "900.00", img: "" },
-            { id: 6, name: "DARK SHADOW X", price: "1100.00", img: "" }
+            { name: "UNIVERSITY HOODIE", price: "999", img: "Picsart_26-02-14_16-25-30-082.png" },
+            { name: "RASPBERRY SWEAT", price: "850", img: "Picsart_26-02-14_16-25-05-041.png" },
+            { name: "NY BLACK EDITION", price: "999", img: "Picsart_26-02-14_16-24-39-633.png" },
+            { name: "AMAZING OVERSIZE", price: "750", img: "Picsart_26-02-13_22-03-08-041.png" }
         ];
 
-        // إدارة التنقل
-        function navigateTo(pageId) {
-            history.pushState({page: pageId}, "", "#" + pageId);
-            renderPage(pageId);
-        }
-
-        window.onpopstate = (e) => renderPage(e.state ? e.state.page : 'splashPage');
-
-        function renderPage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            window.scrollTo(0,0);
-        }
-
-        // بناء المنتجات
-        const grid = document.getElementById('productsGrid');
+        const grid = document.getElementById('productGrid');
         products.forEach(p => {
-            const card = document.createElement('div');
-            card.className = 'product-card';
-            card.innerHTML = `
-                <img src="${p.img}" class="img-box" onerror="this.src='https://placehold.co/400x400/111/444?text=X+Product'">
-                <div style="margin-top:15px; font-weight:bold;">${p.name}</div>
-                <div style="color:#aaa; margin-top:5px;">LE ${p.price}</div>
+            grid.innerHTML += `
+                <div class="card">
+                    <img src="${p.img}" onerror="this.src='https://placehold.co/400x500/111/fff?text=X+STORE'">
+                    <h4 style="margin-top:15px; letter-spacing:1px;">${p.name}</h4>
+                    <p style="color:#666; font-size:0.8rem;">LE ${p.price} EGP</p>
+                </div>
             `;
-            grid.appendChild(card);
         });
     </script>
 </body>
