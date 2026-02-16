@@ -3,782 +3,335 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>X STORE | STORM EDITION</title>
+    <title>X STORE | SPACE INTERFACE</title>
     <style>
+        /* ========== FONTS & RESET ========== */
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap');
 
-        :root {
-            --gold: #FFD700;
-            --bg-black: #0a0a0f;
-            --smoke-white: rgba(220, 240, 255, 0.25);
-            --smoke-gray: rgba(100, 130, 180, 0.2);
-            --lightning-blue: #7ec8ff;
-            --storm-gray: #1a1f2a;
-        }
-
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: var(--bg-black); font-family: 'Rajdhani', 'Orbitron', sans-serif;
-            color: white; overflow-x: hidden; scroll-behavior: smooth;
-        }
-
-        /* ===== خلفية السحاب المتحركة مع البرق ===== */
-        #stormCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-            background: linear-gradient(to bottom, #0b0f17 0%, #1a1f2a 40%, #2a3140 100%);
-        }
-
-        .lightning-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 2;
-            transition: opacity 0.1s ease;
-            mix-blend-mode: overlay;
-        }
-
-        .thunder-shake {
-            animation: shake 0.3s ease-in-out;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50% { transform: translateX(-5px); }
-            20%, 40% { transform: translateX(5px); }
-        }
-
-        /* ===== باقي العناصر ===== */
-        .page {
-            position: relative; z-index: 10; width: 100%; min-height: 100vh;
-            display: none; flex-direction: column; align-items: center; padding: 40px 20px;
+        * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
 
-        .active { display: flex; animation: fadeIn 0.8s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        body {
+            font-family: 'Orbitron', 'Rajdhani', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow: hidden; /* منع السكرول */
+            height: 100vh;
+            width: 100vw;
+        }
 
-        /* ===== مؤشر السلة ===== */
-        .cart-indicator {
+        /* ========== خلفية النجوم المتحركة (Canvas) ========== */
+        #starsCanvas {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            cursor: pointer;
-            background: rgba(10, 15, 25, 0.8);
-            backdrop-filter: blur(10px);
-            padding: 12px 20px;
-            border-radius: 50px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.3s;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            display: block;
         }
 
-        .cart-indicator:hover {
-            border-color: var(--lightning-blue);
-            box-shadow: 0 0 30px rgba(126, 200, 255, 0.3);
-            transform: scale(1.05);
-        }
-
-        .cart-icon {
-            font-size: 24px;
+        /* ========== المحتوى الرئيسي (في المقدمة) ========== */
+        .content {
             position: relative;
-        }
-
-        .cart-count-badge {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: var(--lightning-blue);
-            color: black;
-            font-size: 12px;
-            font-weight: bold;
-            padding: 2px 6px;
-            border-radius: 50%;
-            min-width: 18px;
-            text-align: center;
-        }
-
-        .cart-total {
-            font-weight: 600;
-            letter-spacing: 1px;
-        }
-
-        /* ===== نافذة السلة ===== */
-        .cart-modal {
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            width: 380px;
-            max-width: calc(100vw - 40px);
-            background: rgba(15, 20, 30, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 20px;
-            padding: 25px;
-            z-index: 1001;
-            display: none;
+            z-index: 10;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
             flex-direction: column;
-            gap: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(126, 200, 255, 0.2);
-            animation: slideDown 0.3s ease;
-        }
-
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .cart-modal.show {
-            display: flex;
-        }
-
-        .cart-header {
-            display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 15px;
+            padding: 60px 20px 40px 20px;
+            backdrop-filter: blur(1px);
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
         }
 
-        .cart-header h3 {
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: 2px;
-            color: var(--lightning-blue);
+        /* ========== منطقة اللوجو (قابل للتدوير) ========== */
+        .logo-container {
+            width: 200px;
+            height: 200px;
+            margin-top: 20px;
+            cursor: grab;
+            transition: transform 0.1s ease;
+            filter: drop-shadow(0 0 30px cyan);
         }
 
-        .close-cart {
+        .logo-container:active {
+            cursor: grabbing;
+        }
+
+        .logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            pointer-events: none; /* عشان السحب يشتغل على الحاوية */
+            user-select: none;
+        }
+
+        /* ========== القائمة الرئيسية ========== */
+        .menu {
+            display: flex;
+            gap: 80px;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+        }
+
+        .menu-item {
             cursor: pointer;
-            font-size: 24px;
-            opacity: 0.7;
-            transition: 0.3s;
-        }
-
-        .close-cart:hover {
-            opacity: 1;
-            transform: scale(1.1);
-        }
-
-        .cart-items {
-            max-height: 350px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .cart-item {
-            display: flex;
-            gap: 12px;
-            padding: 10px;
-            border-radius: 12px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.05);
-            animation: itemAppear 0.3s ease;
-        }
-
-        @keyframes itemAppear {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .cart-item-img {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
-        .cart-item-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .cart-item-name {
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .cart-item-price {
-            color: var(--lightning-blue);
-            font-size: 14px;
-        }
-
-        .cart-item-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .cart-item-qty {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .qty-btn {
-            width: 24px;
-            height: 24px;
-            border: 1px solid rgba(255,255,255,0.3);
-            background: transparent;
+            position: relative;
+            transition: all 0.4s;
+            opacity: 0.8;
             color: white;
-            cursor: pointer;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.3s;
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid transparent;
+            border-radius: 30px;
         }
 
-        .qty-btn:hover {
-            background: rgba(255,255,255,0.1);
-            border-color: var(--lightning-blue);
-        }
-
-        .qty-value {
-            min-width: 25px;
-            text-align: center;
-        }
-
-        .remove-item {
-            color: #ff6b6b;
-            cursor: pointer;
-            font-size: 14px;
-            opacity: 0.7;
-            transition: 0.3s;
-        }
-
-        .remove-item:hover {
+        .menu-item:hover {
             opacity: 1;
+            text-shadow: 0 0 30px cyan, 0 0 60px magenta;
             transform: scale(1.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
         }
 
-        .cart-footer {
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .cart-total-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .checkout-btn {
-            background: linear-gradient(135deg, var(--lightning-blue), #4a90e2);
-            border: none;
-            color: black;
-            padding: 15px;
-            font-weight: bold;
+        /* ========== footer (اختياري) ========== */
+        .footer {
+            font-size: 0.9rem;
+            opacity: 0.5;
             letter-spacing: 2px;
-            cursor: pointer;
-            border-radius: 10px;
-            transition: 0.3s;
         }
 
-        .checkout-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(126, 200, 255, 0.3);
+        /* ========== تأثيرات إضافية ========== */
+        .glow-text {
+            animation: glowPulse 3s infinite;
         }
 
-        /* ===== باقي التنسيقات ===== */
-        .splash-content { justify-content: space-between; height: 100vh; }
-        .store-name { font-size: 2rem; font-weight: 900; letter-spacing: 10px; text-shadow: 0 0 20px rgba(126,200,255,0.5); margin-top: 10px; }
-        .main-menu { display: flex; flex-direction: column; gap: 30px; text-align: center; }
-        .menu-item { font-size: 1.5rem; letter-spacing: 8px; cursor: pointer; opacity: 0.7; transition: 0.3s; }
-        .menu-item:hover { opacity: 1; text-shadow: 0 0 20px var(--lightning-blue); transform: scale(1.1); }
-
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; width: 100%; max-width: 1100px; margin-top: 40px; }
-        .product-card {
-            background: rgba(255, 255, 255, 0.03); border-radius: 15px; padding: 20px; transition: 0.4s; cursor: pointer; text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px);
-            animation: cardFloat 6s infinite ease-in-out;
+        @keyframes glowPulse {
+            0% { text-shadow: 0 0 20px cyan; }
+            50% { text-shadow: 0 0 40px magenta, 0 0 20px cyan; }
+            100% { text-shadow: 0 0 20px cyan; }
         }
 
-        @keyframes cardFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
+        /* ========== مؤشر التحميل أو أي رسالة ========== */
+        .info {
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            font-size: 0.8rem;
+            opacity: 0.3;
+            z-index: 20;
         }
-
-        .product-card:hover {
-            border-color: var(--lightning-blue);
-            transform: translateY(-15px) scale(1.02);
-            box-shadow: 0 0 40px rgba(126, 200, 255, 0.2);
-        }
-
-        .img-box { width: 100%; aspect-ratio: 1/1; object-fit: contain; filter: drop-shadow(0 0 15px rgba(126,200,255,0.3)); transition: 0.3s; }
-        .product-card:hover .img-box { filter: drop-shadow(0 0 30px var(--lightning-blue)); transform: scale(1.05); }
-
-        #productDetailPage { background: transparent; overflow: hidden; }
-        .cloud-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
-        .cloud-blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.4; animation: cloudDrift 20s infinite alternate ease-in-out; }
-        .cb-1 { top: -20%; left: -20%; width: 80vw; height: 80vw; background: radial-gradient(circle, rgba(100,130,180,0.3) 0%, rgba(0,0,0,0) 70%); animation-duration: 30s; }
-        .cb-2 { bottom: -30%; right: -20%; width: 90vw; height: 90vw; background: radial-gradient(circle, rgba(80,100,140,0.2) 0%, rgba(0,0,0,0) 70%); animation-duration: 35s; animation-direction: alternate-reverse; }
-        .cb-3 { top: 30%; left: 30%; width: 50vw; height: 50vw; background: radial-gradient(circle, rgba(150,180,220,0.15) 0%, rgba(0,0,0,0) 60%); animation-duration: 25s; }
-        @keyframes cloudDrift { 
-            0% { transform: translate(0, 0) scale(1); } 
-            33% { transform: translate(70px, -60px) scale(1.2); } 
-            66% { transform: translate(-50px, 40px) scale(0.9); } 
-            100% { transform: translate(30px, 30px) scale(1.1); } 
-        }
-
-        .detail-container { display: flex; flex-wrap: wrap; gap: 50px; max-width: 1000px; width: 100%; margin-top: 50px; justify-content: center; align-items: center; position: relative; z-index: 2; }
-        .detail-img { flex: 1; min-width: 300px; max-width: 450px; aspect-ratio: 1/1; object-fit: contain; filter: drop-shadow(0 0 40px rgba(126, 200, 255, 0.4)); animation: floatImg 7s ease-in-out infinite; }
-        @keyframes floatImg { 
-            0%, 100% { transform: translateY(0) rotate(0deg); } 
-            33% { transform: translateY(-15px) rotate(1deg); } 
-            66% { transform: translateY(10px) rotate(-1deg); } 
-        }
-        .detail-info { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 20px; background: rgba(20, 25, 35, 0.7); padding: 30px; border-radius: 20px; backdrop-filter: blur(20px); border: 1px solid rgba(126,200,255,0.2); box-shadow: 0 0 60px rgba(0,0,0,0.6); }
-        .price-tag { font-size: 1.8rem; color: var(--lightning-blue); font-weight: bold; text-shadow: 0 0 15px rgba(126,200,255,0.5); }
-        .size-selector { display: flex; gap: 10px; }
-        .size-btn { border: 1px solid #555; padding: 10px 18px; cursor: pointer; transition: 0.3s; color: #ccc; }
-        .size-btn.selected, .size-btn:hover { border-color: var(--lightning-blue); background: var(--lightning-blue); color: black; box-shadow: 0 0 20px rgba(126,200,255,0.6); }
-        .qty-input { background: rgba(0,0,0,0.5); border: 1px solid #555; color: white; padding: 10px; width: 60px; text-align: center; border-radius: 5px; }
-        .action-btns { display: flex; flex-direction: column; gap: 15px; }
-        .btn-buy { background: linear-gradient(135deg, var(--lightning-blue), #4a90e2); color: black; padding: 16px; border: none; font-weight: bold; cursor: pointer; letter-spacing: 2px; transition: 0.3s; border-radius: 8px; }
-        .btn-buy:hover { transform: scale(1.02); box-shadow: 0 0 30px rgba(126,200,255,0.4); }
-        .btn-cart { background: none; color: white; border: 1px solid rgba(126,200,255,0.3); padding: 16px; cursor: pointer; transition: 0.3s; border-radius: 8px; }
-        .btn-cart:hover { border-color: var(--lightning-blue); background: rgba(126,200,255,0.1); transform: scale(1.02); }
-
-        .back-link { align-self: flex-start; cursor: pointer; color: white; margin-bottom: 20px; font-weight: bold; z-index: 5; opacity: 0.7; }
-        .back-link:hover { opacity: 1; text-shadow: 0 0 15px var(--lightning-blue); }
-
-        .footer-bar { display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: auto; padding-bottom: 30px; width: 100%; }
-        .social-bar { display: flex; gap: 25px; }
-        .social-link svg { width: 22px; fill: white; opacity: 0.6; transition: 0.3s; }
-        .social-link:hover svg { opacity: 1; filter: drop-shadow(0 0 10px var(--lightning-blue)); transform: translateY(-3px); }
     </style>
 </head>
 <body>
 
-    <canvas id="stormCanvas"></canvas>
-    <div class="lightning-overlay" id="lightningOverlay"></div>
+    <!-- Canvas للنجوم المتحركة للخارج -->
+    <canvas id="starsCanvas"></canvas>
 
-    <!-- مؤشر السلة -->
-    <div class="cart-indicator" onclick="toggleCart()">
-        <span class="cart-icon">🛒<span class="cart-count-badge" id="cartCount">0</span></span>
-        <span class="cart-total" id="cartTotal">LE 0</span>
+    <!-- المحتوى الأمامي -->
+    <div class="content">
+        <!-- اللوجو القابل للتدوير 360 درجة -->
+        <div class="logo-container" id="logoContainer">
+            <!-- هنا حط رابط الصورة بتاعتك -->
+            <img src="https://via.placeholder.com/400x400/000000/00ffff?text=X+STORE" alt="X STORE Logo" id="logoImage">
+        </div>
+
+        <!-- القائمة زي ما طلبت: HOME - CATALOG - CONTACT -->
+        <div class="menu">
+            <div class="menu-item" onclick="alert('HOME')">HOME</div>
+            <div class="menu-item" onclick="alert('CATALOG')">CATALOG</div>
+            <div class="menu-item" onclick="alert('CONTACT')">CONTACT</div>
+        </div>
+
+        <!-- فوتر بسيط -->
+        <div class="footer">X STORE © 2026</div>
     </div>
 
-    <!-- نافذة السلة -->
-    <div class="cart-modal" id="cartModal">
-        <div class="cart-header">
-            <h3>🛒 YOUR STORM CART</h3>
-            <span class="close-cart" onclick="toggleCart()">✕</span>
-        </div>
-        <div class="cart-items" id="cartItems"></div>
-        <div class="cart-footer">
-            <div class="cart-total-row">
-                <span>المجموع:</span>
-                <span id="cartModalTotal">LE 0</span>
-            </div>
-            <button class="checkout-btn" onclick="checkout()">CHECKOUT VIA WHATSAPP</button>
-        </div>
-    </div>
-
-    <div id="splashPage" class="page splash-content active">
-        <div style="text-align: center;">
-            <svg width="100" height="100" viewBox="0 0 200 200" id="logoContainer">
-                <g id="logo-mesh" stroke="var(--lightning-blue)" stroke-width="15" fill="none" style="filter: drop-shadow(0 0 15px #7ec8ff);">
-                    <path d="M50,150 L150,50" /><path d="M150,150 L50,50" />
-                </g>
-            </svg>
-            <div class="store-name">X STORE</div>
-        </div>
-        <nav class="main-menu">
-            <div class="menu-item" onclick="navigateTo('catalogPage')">HOME</div>
-            <div class="menu-item" onclick="navigateTo('catalogPage')">CATALOG</div>
-            <div class="menu-item">CONTACT</div>
-        </nav>
-        <div class="footer-bar">
-            <div class="social-bar">
-                <a href="https://www.instagram.com/xce____7oda__x?igsh=cmI5aXd4OHp1cDhl" target="_blank" class="social-link"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.069-4.85.069-3.204 0-3.584-.012-4.849-.069-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg></a>
-                <a href="https://www.tiktok.com/@628..2?_r=1&_t=ZS-93ujRpfUhj2" target="_blank" class="social-link"><svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.65-1.55-1.09-.01 2.83.03 5.66-.02 8.5-.16 2.61-2.14 4.86-4.73 5.37-2.67.55-5.5-1.09-6.18-3.69-.69-2.58 1.25-5.22 3.93-5.32v4.02c-1.23-.05-2.26 1.18-2.03 2.43.21 1.16 1.47 1.83 2.52 1.46 1.15-.36 1.84-1.58 1.68-2.78-.05-4.46-.02-8.91-.03-13.37-.01-1.63-.01-3.26-.01-4.89-.84.23-1.69.45-2.54.67-.01-.13-.02-.27-.03-.4 1.05-.29 2.1-.58 3.16-.89z"/></svg></a>
-            </div>
-        </div>
-    </div>
-
-    <div id="catalogPage" class="page">
-        <div class="back-link" onclick="history.back()">← BACK</div>
-        <div class="store-name" style="font-size: 1.5rem;">STORM COLLECTIONS</div>
-        <div class="products-grid" id="productsGrid"></div>
-    </div>
-
-    <div id="productDetailPage" class="page">
-        <div class="cloud-container">
-            <div class="cloud-blob cb-1"></div>
-            <div class="cloud-blob cb-2"></div>
-            <div class="cloud-blob cb-3"></div>
-        </div>
-        <div class="back-link" onclick="history.back()">← BACK</div>
-        <div class="detail-container" id="productDetailContent"></div>
-    </div>
+    <!-- معلومة صغيرة (اختياري) -->
+    <div class="info">drag logo to rotate 360°</div>
 
     <script>
-        // ==========================================
-        //  بيانات المنتجات
-        // ==========================================
-        const products = [
-            { id: 1, name: "UNIVERSITY HOODIE", price: "999.00", img: "Picsart_26-02-14_16-25-30-082.png" },
-            { id: 2, name: "RASPBERRY SWEAT", price: "850.00", img: "Picsart_26-02-14_16-25-05-041.png" },
-            { id: 3, name: "NY BLACK EDITION", price: "999.00", img: "Picsart_26-02-14_16-24-39-633.png" },
-            { id: 4, name: "AMAZING OVERSIZE", price: "750.00", img: "Picsart_26-02-13_22-03-08-041.png" },
-            { id: 5, name: "VINTAGE WHITE", price: "900.00", img: "ضع_رابط_الصورة_هنا" },
-            { id: 6, name: "DARK SHADOW X", price: "1100.00", img: "ضع_رابط_الصورة_هنا" }
-        ];
+        (function() {
+            // ========== إعدادات Canvas والنجوم ==========
+            const canvas = document.getElementById('starsCanvas');
+            const ctx = canvas.getContext('2d');
 
-        const whatsappNumber = "201000000000";
+            let width, height;
+            let stars = [];
+            const STAR_COUNT = 800; // عدد النجوم
+            const SPEED = 2; // سرعة الحركة للخارج
 
-        // ==========================================
-        //  نظام السلة (Cart System)
-        // ==========================================
-        let cart = JSON.parse(localStorage.getItem('stormCart')) || [];
-
-        function saveCart() {
-            localStorage.setItem('stormCart', JSON.stringify(cart));
-            updateCartUI();
-        }
-
-        function updateCartUI() {
-            // تحديث العداد
-            const count = cart.reduce((sum, item) => sum + item.qty, 0);
-            document.getElementById('cartCount').textContent = count;
-            
-            // تحديث المجموع
-            const total = cart.reduce((sum, item) => sum + (parseFloat(item.price) * item.qty), 0);
-            document.getElementById('cartTotal').textContent = `LE ${total.toFixed(2)}`;
-            document.getElementById('cartModalTotal').textContent = `LE ${total.toFixed(2)}`;
-
-            // تحديث محتوى السلة
-            const cartItemsEl = document.getElementById('cartItems');
-            if (cart.length === 0) {
-                cartItemsEl.innerHTML = '<div style="text-align: center; color: #888; padding: 30px;">السلة فارغة 🌪️</div>';
-                return;
+            // تهيئة حجم canvas
+            function initSize() {
+                width = window.innerWidth;
+                height = window.innerHeight;
+                canvas.width = width;
+                canvas.height = height;
             }
 
-            cartItemsEl.innerHTML = cart.map(item => `
-                <div class="cart-item" data-id="${item.id}" data-size="${item.size}">
-                    <img src="${item.img}" class="cart-item-img" onerror="this.src='https://placehold.co/400x400/111/444?text=Product'">
-                    <div class="cart-item-info">
-                        <div class="cart-item-name">${item.name}</div>
-                        <div class="cart-item-price">LE ${item.price}</div>
-                        <div style="font-size:12px; color:#888;">Size: ${item.size}</div>
-                        <div class="cart-item-controls">
-                            <div class="cart-item-qty">
-                                <button class="qty-btn" onclick="updateQty('${item.id}', '${item.size}', -1)">−</button>
-                                <span class="qty-value">${item.qty}</span>
-                                <button class="qty-btn" onclick="updateQty('${item.id}', '${item.size}', 1)">+</button>
-                            </div>
-                            <span class="remove-item" onclick="removeFromCart('${item.id}', '${item.size}')">✕</span>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function addToCart(product, size, qty) {
-            const existing = cart.find(item => item.id === product.id && item.size === size);
-            
-            if (existing) {
-                existing.qty += qty;
-            } else {
-                cart.push({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    img: product.img,
-                    size: size,
-                    qty: qty
-                });
-            }
-            
-            saveCart();
-            
-            // تأثير بصري
-            document.body.classList.add('thunder-shake');
-            setTimeout(() => document.body.classList.remove('thunder-shake'), 300);
-            
-            // فتح السلة
-            showCart();
-        }
-
-        function updateQty(productId, size, delta) {
-            const item = cart.find(i => i.id === productId && i.size === size);
-            if (item) {
-                item.qty += delta;
-                if (item.qty <= 0) {
-                    cart = cart.filter(i => !(i.id === productId && i.size === size));
+            // إنشاء النجوم بشكل عشوائي
+            function initStars() {
+                stars = [];
+                for (let i = 0; i < STAR_COUNT; i++) {
+                    stars.push({
+                        x: Math.random() * width - width/2,  // تتركز في النص
+                        y: Math.random() * height - height/2,
+                        z: Math.random() * width,            // العمق
+                        size: Math.random() * 2 + 1,
+                        color: `rgba(255, 255, 255, ${Math.random() * 0.7 + 0.3})`
+                    });
                 }
-                saveCart();
-            }
-        }
-
-        function removeFromCart(productId, size) {
-            cart = cart.filter(i => !(i.id === productId && i.size === size));
-            saveCart();
-        }
-
-        function toggleCart() {
-            const modal = document.getElementById('cartModal');
-            modal.classList.toggle('show');
-        }
-
-        function showCart() {
-            document.getElementById('cartModal').classList.add('show');
-        }
-
-        function checkout() {
-            if (cart.length === 0) {
-                alert('السلة فارغة!');
-                return;
             }
 
-            let message = '🛒 *Order from X STORE STORM EDITION*%0A%0A';
-            cart.forEach(item => {
-                message += `• ${item.name} (Size: ${item.size}) x${item.qty} - LE ${parseFloat(item.price) * item.qty}%0A`;
-            });
-            const total = cart.reduce((sum, i) => sum + (parseFloat(i.price) * i.qty), 0);
-            message += `%0A*Total: LE ${total.toFixed(2)}*`;
-
-            window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
-        }
-
-        // ==========================================
-        //  نظام الصفحات والتنقل
-        // ==========================================
-        window.addEventListener('load', () => {
-            history.replaceState({page: 'splashPage'}, "", "#splashPage");
-            updateCartUI();
-            startStorm();
-        });
-
-        window.onpopstate = function(event) {
-            if (event.state && event.state.page) {
-                renderPage(event.state.page);
-            } else {
-                renderPage('splashPage');
-            }
-        };
-
-        function navigateTo(pageId) {
-            history.pushState({page: pageId}, "", "#" + pageId);
-            renderPage(pageId);
-        }
-
-        function renderPage(pageId) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            window.scrollTo(0,0);
-        }
-
-        // ==========================================
-        //  بناء شبكة المنتجات
-        // ==========================================
-        const grid = document.getElementById('productsGrid');
-        products.forEach(p => {
-            const card = document.createElement('div');
-            card.className = 'product-card';
-            card.onclick = () => openProduct(p);
-            card.innerHTML = `
-                <img src="${p.img}" class="img-box" onerror="this.src='https://placehold.co/400x400/111/444?text=Product'">
-                <div style="margin-top:15px; font-weight:bold;">${p.name}</div>
-                <div style="color:#7ec8ff; margin-top:5px;">LE ${p.price}</div>
-            `;
-            grid.appendChild(card);
-        });
-
-        function openProduct(product) {
-            const detailBox = document.getElementById('productDetailContent');
-            detailBox.innerHTML = `
-                <img src="${product.img}" class="detail-img" onerror="this.src='https://placehold.co/400x400/111/444?text=Product'">
-                <div class="detail-info">
-                    <h1 style="letter-spacing:3px; color:white;">${product.name}</h1>
-                    <div class="price-tag">LE ${product.price} EGP</div>
-                    <p style="color:#ccc; font-size:0.9rem;">Storm edition streetwear, crafted for the brave.</p>
-                    <div>
-                        <span style="font-size:0.7rem; color:#aaa;">SIZE:</span>
-                        <div class="size-selector">
-                            <div class="size-btn" onclick="selectSize(this)">S</div>
-                            <div class="size-btn selected" onclick="selectSize(this)">M</div>
-                            <div class="size-btn" onclick="selectSize(this)">L</div>
-                            <div class="size-btn" onclick="selectSize(this)">XL</div>
-                        </div>
-                    </div>
-                    <div>
-                        <span style="font-size:0.7rem; color:#aaa;">QTY:</span><br>
-                        <input type="number" class="qty-input" id="detailQty" value="1" min="1">
-                    </div>
-                    <div class="action-btns">
-                        <button class="btn-buy" onclick="buyNow('${product.id}')">BUY NOW (WHATSAPP)</button>
-                        <button class="btn-cart" onclick="addToCartFromDetail(${JSON.stringify(product).replace(/"/g, '&quot;')})">ADD TO CART</button>
-                    </div>
-                </div>
-            `;
-            navigateTo('productDetailPage');
-        }
-
-        function addToCartFromDetail(product) {
-            const size = document.querySelector('.size-btn.selected').innerText;
-            const qty = parseInt(document.getElementById('detailQty').value);
-            addToCart(product, size, qty);
-        }
-
-        function buyNow(productId) {
-            const product = products.find(p => p.id === productId);
-            const size = document.querySelector('.size-btn.selected').innerText;
-            const qty = document.getElementById('detailQty').value;
-            const msg = `⚡ *STORM ORDER* ⚡%0AItem: ${product.name}%0APrice: LE ${product.price}%0ASize: ${size}%0AQty: ${qty}%0ATotal: LE ${parseFloat(product.price) * qty}`;
-            window.open(`https://wa.me/${whatsappNumber}?text=${msg}`, '_blank');
-        }
-
-        function selectSize(btn) {
-            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-        }
-
-        // ==========================================
-        //  خلفية السحاب والبرق (بدل النجوم)
-        // ==========================================
-        const canvas = document.getElementById('stormCanvas');
-        const ctx = canvas.getContext('2d');
-        const lightningOverlay = document.getElementById('lightningOverlay');
-
-        let particles = [];
-        let lastLightning = 0;
-
-        function initStorm() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            
-            // إنشاء جزيئات السحاب
-            particles = [];
-            for (let i = 0; i < 150; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height * 0.7,
-                    radius: 30 + Math.random() * 70,
-                    speedX: (Math.random() - 0.5) * 0.5,
-                    speedY: (Math.random() - 0.5) * 0.2,
-                    opacity: 0.1 + Math.random() * 0.2
-                });
-            }
-        }
-
-        function drawStorm() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // رسم طبقات السحاب
-            ctx.fillStyle = '#0a0f17';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // رسم جزيئات السحاب
-            particles.forEach(p => {
-                const gradient = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.radius);
-                gradient.addColorStop(0, `rgba(130, 150, 180, ${p.opacity})`);
-                gradient.addColorStop(0.5, `rgba(80, 100, 130, ${p.opacity * 0.5})`);
-                gradient.addColorStop(1, 'rgba(40, 50, 70, 0)');
-                
-                ctx.beginPath();
-                ctx.fillStyle = gradient;
-                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // حركة السحاب
-                p.x += p.speedX;
-                p.y += p.speedY;
-                
-                // إعادة التدوير
-                if (p.x < -p.radius) p.x = canvas.width + p.radius;
-                if (p.x > canvas.width + p.radius) p.x = -p.radius;
-                if (p.y < -p.radius) p.y = canvas.height + p.radius;
-                if (p.y > canvas.height + p.radius) p.y = -p.radius;
-            });
-            
-            requestAnimationFrame(drawStorm);
-        }
-
-        function startStorm() {
-            initStorm();
-            drawStorm();
-            
-            // برق عشوائي
-            setInterval(() => {
-                if (Math.random() > 0.7) {
-                    lightningOverlay.style.opacity = '0.8';
-                    document.body.classList.add('thunder-shake');
-                    
-                    setTimeout(() => {
-                        lightningOverlay.style.opacity = '0';
-                        document.body.classList.remove('thunder-shake');
-                    }, 100);
-                    
-                    setTimeout(() => {
-                        lightningOverlay.style.opacity = '0.4';
-                        setTimeout(() => {
-                            lightningOverlay.style.opacity = '0';
-                        }, 50);
-                    }, 150);
+            // تحديث وتحريك النجوم (للخارج)
+            function updateStars() {
+                for (let s of stars) {
+                    s.z -= SPEED; // تقليل z يعني الاقتراب
+                    if (s.z <= 0) {
+                        // إذا اقترب أكثر من اللازم، نعيده للخلف
+                        s.z = width;
+                        s.x = Math.random() * width - width/2;
+                        s.y = Math.random() * height - height/2;
+                    }
                 }
-            }, 3000);
-        }
+            }
 
-        window.addEventListener('resize', initStorm);
+            // رسم النجوم
+            function drawStars() {
+                ctx.clearRect(0, 0, width, height);
+                
+                // خلفية سوداء عميقة
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0, 0, width, height);
 
-        // ==========================================
-        //  لوجو تفاعلي
-        // ==========================================
-        const container = document.getElementById('logoContainer');
-        const mesh = document.getElementById('logo-mesh');
-        let isDown = false; let startX, startY;
-        
-        const start = (e) => { 
-            isDown = true; 
-            startX = (e.pageX || e.touches[0].pageX); 
-            startY = (e.pageY || e.touches[0].pageY); 
-            mesh.style.transition = "none"; 
-        };
-        
-        const move = (e) => { 
-            if(!isDown) return; 
-            let x = (e.pageX || e.touches[0].pageX); 
-            let y = (e.pageY || e.touches[0].pageY);
-            let rotY = (x - startX) * 0.5; 
-            let rotX = (startY - y) * 0.5;
-            mesh.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`; 
-        };
-        
-        const end = () => { 
-            isDown = false; 
-            mesh.style.transition = "transform 0.8s ease"; 
-            mesh.style.transform = `rotateX(0deg) rotateY(0deg)`; 
-        };
-        
-        container.addEventListener('mousedown', start); 
-        window.addEventListener('mousemove', move); 
-        window.addEventListener('mouseup', end);
-        container.addEventListener('touchstart', start); 
-        window.addEventListener('touchmove', move); 
-        window.addEventListener('touchend', end);
+                for (let s of stars) {
+                    // إسقاط 3D إلى 2D
+                    let x = (s.x / s.z) * width + width/2;
+                    let y = (s.y / s.z) * height + height/2;
+                    
+                    // كلما كان z أصغر (أقرب) كلما كانت النجمة أكبر
+                    let size = s.size * (1 - s.z / width) * 3;
+                    
+                    // الشفافية حسب العمق
+                    let opacity = Math.min(1, 1 - s.z / width);
+                    
+                    ctx.beginPath();
+                    ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+                    ctx.arc(x, y, size, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // إضافة تأثير توهج خفيف لبعض النجوم
+                    if (s.size > 1.5) {
+                        ctx.shadowColor = 'cyan';
+                        ctx.shadowBlur = 10;
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+                    }
+                }
+            }
+
+            // حلقة الحركة
+            function animate() {
+                updateStars();
+                drawStars();
+                requestAnimationFrame(animate);
+            }
+
+            // عند تغيير حجم النافذة
+            window.addEventListener('resize', () => {
+                initSize();
+                initStars(); // نعيد توليد النجوم لتتلاءم مع الحجم الجديد
+            });
+
+            // بدء كل شيء
+            initSize();
+            initStars();
+            animate();
+
+            // ========== تدوير اللوجو 360 درجة بالماوس ==========
+            const logoContainer = document.getElementById('logoContainer');
+            let isDragging = false;
+            let previousAngle = 0;
+            let currentRotation = 0;
+            let centerX, centerY;
+
+            // حساب زاوية بين نقطة ومركز اللوجو
+            function getAngle(e) {
+                const rect = logoContainer.getBoundingClientRect();
+                centerX = rect.left + rect.width / 2;
+                centerY = rect.top + rect.height / 2;
+
+                let clientX, clientY;
+                if (e.touches) {
+                    clientX = e.touches[0].clientX;
+                    clientY = e.touches[0].clientY;
+                } else {
+                    clientX = e.clientX;
+                    clientY = e.clientY;
+                }
+
+                const dx = clientX - centerX;
+                const dy = clientY - centerY;
+                return Math.atan2(dy, dx) * (180 / Math.PI); // زاوية بالدرجات
+            }
+
+            function onDragStart(e) {
+                e.preventDefault(); // منع تحديد النص
+                isDragging = true;
+                previousAngle = getAngle(e);
+                logoContainer.style.transition = 'none'; // إلغاء الانتقال أثناء السحب
+            }
+
+            function onDragMove(e) {
+                if (!isDragging) return;
+                e.preventDefault();
+
+                const currentAngle = getAngle(e);
+                let delta = currentAngle - previousAngle;
+
+                // التعامل مع عبور 360/0
+                if (delta > 180) delta -= 360;
+                if (delta < -180) delta += 360;
+
+                currentRotation += delta;
+                logoContainer.style.transform = `rotate(${currentRotation}deg)`;
+
+                previousAngle = currentAngle;
+            }
+
+            function onDragEnd(e) {
+                if (isDragging) {
+                    isDragging = false;
+                    logoContainer.style.transition = 'transform 0.3s ease'; // إعادة الانتقال
+                }
+            }
+
+            // دعم الماوس
+            logoContainer.addEventListener('mousedown', onDragStart);
+            window.addEventListener('mousemove', onDragMove);
+            window.addEventListener('mouseup', onDragEnd);
+
+            // دعم اللمس للجوال
+            logoContainer.addEventListener('touchstart', onDragStart, { passive: false });
+            window.addEventListener('touchmove', onDragMove, { passive: false });
+            window.addEventListener('touchend', onDragEnd);
+            window.addEventListener('touchcancel', onDragEnd);
+
+            // منع السحب الافتراضي للصور
+            document.querySelectorAll('img').forEach(img => {
+                img.addEventListener('dragstart', (e) => e.preventDefault());
+            });
+
+        })();
     </script>
 </body>
 </html>
