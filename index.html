@@ -1,231 +1,213 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>X STORE | Premium Experience</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Cairo:wght@400;700&display=swap');
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>X STORE</title>
 
-        :root {
-            --accent: #ffffff;
-            --bg: #000000;
-        }
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, Helvetica, sans-serif;
+}
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body, html { 
-            width: 100%; height: 100%; background: var(--bg); 
-            font-family: 'Orbitron', 'Cairo', sans-serif; color: white; overflow-x: hidden;
-        }
+body{
+background:black;
+color:white;
+overflow-x:hidden;
+}
 
-        /* خلفية النجوم (نفس الفيديو) */
-        #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+.stars{
+position:fixed;
+width:100%;
+height:100%;
+background:black url('https://www.transparenttextures.com/patterns/stardust.png');
+animation: moveStars 60s linear infinite;
+z-index:-1;
+}
 
-        /* شاشة التحميل والدوار (Loader) */
-        #loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: black; z-index: 10000; display: flex; justify-content: center; align-items: center;
-            transition: opacity 0.6s ease;
-        }
-        .loader-logo {
-            width: 100px; height: 100px;
-            filter: drop-shadow(0 0 10px white);
-            animation: pulseLogo 1.5s ease-in-out infinite;
-        }
-        @keyframes pulseLogo { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.7; } }
+@keyframes moveStars{
+from{background-position:0 0;}
+to{background-position:10000px 5000px;}
+}
 
-        /* اللوجو الثابت في كل الصفحات */
-        .site-logo {
-            width: 60px; height: auto; z-index: 1000; cursor: pointer;
-            transition: 0.3s; filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
-        }
-        .site-logo:hover { transform: scale(1.1); }
+header{
+text-align:center;
+padding:40px 0;
+}
 
-        /* تنسيق الصفحات */
-        .page {
-            position: relative; z-index: 10; width: 100%; min-height: 100vh;
-            display: none; flex-direction: column; align-items: center; padding: 40px 20px;
-        }
-        .active { display: flex; animation: zoomIn 0.8s ease forwards; }
+.logo{
+width:140px;
+margin-bottom:20px;
+}
 
-        @keyframes zoomIn { 
-            from { opacity: 0; transform: scale(0.9); } 
-            to { opacity: 1; transform: scale(1); } 
-        }
+h1{
+letter-spacing:4px;
+margin-bottom:20px;
+}
 
-        /* الصفحة الرئيسية */
-        .hero-section { height: 100vh; justify-content: center; gap: 40px; }
-        .nav-links { display: flex; flex-direction: column; gap: 20px; text-align: center; }
-        .nav-item { font-size: 1.5rem; letter-spacing: 8px; cursor: pointer; opacity: 0.6; transition: 0.4s; }
-        .nav-item:hover { opacity: 1; letter-spacing: 12px; text-shadow: 0 0 15px white; }
+.products{
+padding:40px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:25px;
+}
 
-        /* شبكة الكتالوج */
-        .catalog-header { display: flex; justify-content: space-between; width: 100%; max-width: 1100px; align-items: center; margin-bottom: 50px; }
-        .grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 30px; width: 100%; max-width: 1100px;
-        }
-        .product-card {
-            background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 15px; padding: 15px; transition: 0.5s; cursor: pointer; text-align: center;
-            backdrop-filter: blur(5px);
-        }
-        .product-card:hover { transform: translateY(-10px); border-color: white; background: rgba(255,255,255,0.08); }
-        .product-card img { width: 100%; border-radius: 10px; margin-bottom: 15px; }
+.card{
+background:rgba(255,255,255,0.05);
+padding:15px;
+border-radius:10px;
+text-align:center;
+cursor:pointer;
+transition:0.3s;
+}
 
-        /* صفحة تفاصيل المنتج */
-        .detail-container {
-            display: flex; flex-wrap: wrap; gap: 50px; max-width: 1000px; 
-            width: 100%; margin-top: 40px; justify-content: center; align-items: flex-start;
-        }
-        .product-img-large { width: 100%; max-width: 450px; border-radius: 20px; filter: drop-shadow(0 10px 30px rgba(0,0,0,0.5)); }
-        .info-panel { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 25px; }
-        
-        .size-selector { display: flex; gap: 10px; margin: 15px 0; }
-        .size-btn { 
-            border: 1px solid #444; padding: 10px 20px; cursor: pointer; 
-            transition: 0.3s; border-radius: 5px; font-weight: bold;
-        }
-        .size-btn.selected { background: white; color: black; border-color: white; }
+.card:hover{
+transform:translateY(-8px);
+background:rgba(255,255,255,0.1);
+}
 
-        .btn-order {
-            background: white; color: black; padding: 18px; border: none;
-            font-weight: 900; cursor: pointer; letter-spacing: 2px;
-            transition: 0.3s; width: 100%; border-radius: 10px;
-        }
-        .btn-order:hover { background: #ccc; transform: scale(1.02); }
+.card img{
+width:100%;
+height:250px;
+object-fit:cover;
+border-radius:8px;
+margin-bottom:10px;
+}
 
-        .back-link { cursor: pointer; opacity: 0.5; align-self: flex-start; margin-bottom: 20px; }
-        .back-link:hover { opacity: 1; }
+.details{
+display:none;
+padding:40px;
+text-align:center;
+}
 
-    </style>
+.details img{
+width:300px;
+max-width:90%;
+border-radius:10px;
+margin-bottom:20px;
+}
+
+button{
+padding:10px 20px;
+border:none;
+background:#00f0ff;
+color:black;
+border-radius:6px;
+cursor:pointer;
+margin-top:10px;
+}
+
+.back{
+background:#444;
+color:white;
+margin-right:10px;
+}
+</style>
 </head>
+
 <body>
 
-    <canvas id="starfield"></canvas>
+<div class="stars"></div>
 
-    <div id="loader">
-        <img src="https://i.ibb.co/1000267202.png" class="loader-logo" alt="X Logo">
-    </div>
+<header>
+<!-- 🔹 حط رابط اللوجو هنا -->
+<img src="PUT_LOGO_LINK_HERE" class="logo">
+<h1>X STORE</h1>
+</header>
 
-    <div id="homePage" class="page active hero-section">
-        <img src="https://i.ibb.co/1000267202.png" class="loader-logo" style="width: 150px; height: auto;" alt="X Logo">
-        <div class="nav-links">
-            <div class="nav-item" onclick="navigateTo('catalogPage')">CATALOG</div>
-            <div class="nav-item">CONTACT</div>
-            <div class="nav-item">COLLECTIONS</div>
-        </div>
-    </div>
+<section class="products" id="productList">
 
-    <div id="catalogPage" class="page">
-        <div class="catalog-header">
-            <img src="https://i.ibb.co/1000267202.png" class="site-logo" onclick="navigateTo('homePage')" alt="X Logo">
-            <h2 style="letter-spacing: 5px;">COLLECTION</h2>
-            <div style="width: 60px;"></div> </div>
-        <div class="grid" id="productGrid"></div>
-    </div>
+<!-- 🔹 غير روابط الصور والأسعار -->
 
-    <div id="detailPage" class="page">
-        <div class="catalog-header">
-            <img src="https://i.ibb.co/1000267202.png" class="site-logo" onclick="navigateTo('homePage')" alt="X Logo">
-            <div class="back-link" onclick="navigateTo('catalogPage')">← BACK TO CATALOG</div>
-            <div style="width: 60px;"></div>
-        </div>
-        <div id="detailContent" class="detail-container"></div>
-    </div>
+<div class="card" onclick="openProduct(1)">
+<img src="PUT_PRODUCT_IMAGE_1">
+<h3>Black Hoodie</h3>
+<p>$35</p>
+</div>
 
-    <script>
-        // --- بيانات المنتجات (يمكنك تعديل الروابط والأسماء هنا) ---
-        const products = [
-            { id: 1, name: "HOODIE GHOST X", price: "1,200", img: "Picsart_26-02-14_16-25-05-041.png" },
-            { id: 2, name: "RASPBERRY SWEAT", price: "950", img: "Picsart_26-02-14_16-25-30-082.png" },
-            { id: 3, name: "NY BLACK EDITION", price: "1,100", img: "https://i.ibb.co/Picsart-26-02-14-16-24-39-633.png" },
-            { id: 4, name: "AMAZING OVERSIZE", price: "850", img: "https://i.ibb.co/Picsart-26-02-13-22-03-08-041.png" }
-        ];
+<div class="card" onclick="openProduct(2)">
+<img src="PUT_PRODUCT_IMAGE_2">
+<h3>Oversize T-Shirt</h3>
+<p>$25</p>
+</div>
 
-        const whatsappNumber = "201000000000"; // ضع رقمك هنا
+<div class="card" onclick="openProduct(3)">
+<img src="PUT_PRODUCT_IMAGE_3">
+<h3>Street Jacket</h3>
+<p>$60</p>
+</div>
 
-        // --- نظام النجوم (نفس الفيديو) ---
-        const canvas = document.getElementById('starfield');
-        const ctx = canvas.getContext('2d');
-        let stars = [];
-        function initStars() {
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            stars = [];
-            for (let i = 0; i < 400; i++) stars.push({ x: Math.random() * canvas.width - canvas.width / 2, y: Math.random() * canvas.height - canvas.height / 2, z: Math.random() * canvas.width, o: Math.random() });
-        }
-        function drawStars() {
-            ctx.fillStyle = "black"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            for (let s of stars) {
-                s.z -= 2.5; if (s.z <= 0) s.z = canvas.width;
-                let x = (s.x / s.z) * canvas.width + canvas.width / 2;
-                let y = (s.y / s.z) * canvas.height + canvas.height / 2;
-                let r = (1 - s.z / canvas.width) * 2;
-                ctx.beginPath(); ctx.fillStyle = `rgba(255, 255, 255, ${s.o})`; ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
-            }
-            requestAnimationFrame(drawStars);
-        }
-        window.addEventListener('resize', initStars); initStars(); drawStars();
+<div class="card" onclick="openProduct(4)">
+<img src="PUT_PRODUCT_IMAGE_4">
+<h3>Casual Shirt</h3>
+<p>$30</p>
+</div>
 
-        // --- التحكم في التنقل (Loader) ---
-        function navigateTo(pageId) {
-            const loader = document.getElementById('loader');
-            loader.style.display = 'flex'; loader.style.opacity = '1';
-            setTimeout(() => {
-                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-                document.getElementById(pageId).classList.add('active');
-                loader.style.opacity = '0';
-                setTimeout(() => loader.style.display = 'none', 600);
-            }, 800);
-        }
+<div class="card" onclick="openProduct(5)">
+<img src="PUT_PRODUCT_IMAGE_5">
+<h3>Denim Pants</h3>
+<p>$45</p>
+</div>
 
-        // إخفاء التحميل الأول
-        window.addEventListener('load', () => setTimeout(() => navigateTo('homePage'), 1000));
+<div class="card" onclick="openProduct(6)">
+<img src="PUT_PRODUCT_IMAGE_6">
+<h3>Sport Set</h3>
+<p>$70</p>
+</div>
 
-        // --- بناء الكتالوج ---
-        const grid = document.getElementById('productGrid');
-        products.forEach(p => {
-            const card = document.createElement('div');
-            card.className = 'product-card';
-            card.onclick = () => showDetails(p);
-            card.innerHTML = `<img src="${p.img}"><h3>${p.name}</h3><p>LE ${p.price}</p>`;
-            grid.appendChild(card);
-        });
+</section>
 
-        // --- عرض تفاصيل المنتج ---
-        function showDetails(product) {
-            const content = document.getElementById('detailContent');
-            content.innerHTML = `
-                <img src="${product.img}" class="product-img-large">
-                <div class="info-panel">
-                    <h1 style="font-size: 2.5rem;">${product.name}</h1>
-                    <div style="font-size: 1.8rem; color: #888;">EGP ${product.price}</div>
-                    <p style="font-family: 'Cairo';">خامات فاخرة، تصميم عصري مريح (Oversized Fit) يناسب جميع الأذواق.</p>
-                    <div>
-                        <p style="font-size: 0.8rem; opacity: 0.5;">SELECT SIZE</p>
-                        <div class="size-selector">
-                            <div class="size-btn" onclick="selectSize(this)">S</div>
-                            <div class="size-btn selected" onclick="selectSize(this)">M</div>
-                            <div class="size-btn" onclick="selectSize(this)">L</div>
-                            <div class="size-btn" onclick="selectSize(this)">XL</div>
-                        </div>
-                    </div>
-                    <button class="btn-order" onclick="orderWhatsApp('${product.name}')">ORDER VIA WHATSAPP</button>
-                </div>
-            `;
-            navigateTo('detailPage');
-        }
+<section class="details" id="detailsPage">
+<img id="detailsImg">
+<h2 id="detailsTitle"></h2>
+<p id="detailsPrice"></p>
 
-        function selectSize(btn) {
-            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-        }
+<br>
 
-        function orderWhatsApp(name) {
-            const size = document.querySelector('.size-btn.selected').innerText;
-            const msg = `أهلاً X STORE، أريد طلب:\nالمنتج: ${name}\nالمقاس: ${size}`;
-            window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-    </script>
+<!-- 🔹 حط رقم واتساب بتاعك بدل 201XXXXXXXXX -->
+<a id="whatsappLink" target="_blank">
+<button>Order via WhatsApp</button>
+</a>
+
+<br><br>
+
+<button class="back" onclick="goBack()">Back</button>
+</section>
+
+<script>
+
+const products = {
+1:{title:"Black Hoodie", price:"$35", img:"PUT_PRODUCT_IMAGE_1"},
+2:{title:"Oversize T-Shirt", price:"$25", img:"PUT_PRODUCT_IMAGE_2"},
+3:{title:"Street Jacket", price:"$60", img:"PUT_PRODUCT_IMAGE_3"},
+4:{title:"Casual Shirt", price:"$30", img:"PUT_PRODUCT_IMAGE_4"},
+5:{title:"Denim Pants", price:"$45", img:"PUT_PRODUCT_IMAGE_5"},
+6:{title:"Sport Set", price:"$70", img:"PUT_PRODUCT_IMAGE_6"},
+};
+
+function openProduct(id){
+document.getElementById("productList").style.display="none";
+document.getElementById("detailsPage").style.display="block";
+
+document.getElementById("detailsImg").src = products[id].img;
+document.getElementById("detailsTitle").innerText = products[id].title;
+document.getElementById("detailsPrice").innerText = products[id].price;
+
+let message = "Hello, I want to order: " + products[id].title + " - " + products[id].price;
+
+document.getElementById("whatsappLink").href =
+"https://wa.me/201XXXXXXXXX?text=" + encodeURIComponent(message);
+}
+
+function goBack(){
+document.getElementById("detailsPage").style.display="none";
+document.getElementById("productList").style.display="grid";
+}
+
+</script>
+
 </body>
 </html>
