@@ -1,416 +1,196 @@
 <!DOCTYPE html>
-<html lang="ar" dir="ltr">
+<html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>موقع المنتجات</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kausa Brand Clone</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* إعدادات عامة */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Arial', sans-serif; }
+        body { background-color: #000; color: #fff; overflow-x: hidden; }
+
+        /* --- تأثير الخلفية الحبيبية (Grainy Effect) --- */
+        .grainy-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/stardust.png'); /* مثال لخلفية منقطة */
+            opacity: 0.1; pointer-events: none; z-index: 99;
         }
 
-        body {
-            background-color: #0c0c0c;
-            color: #fff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        /* --- صفحة الهبوط (Home) --- */
+        #home-page {
+            height: 100vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: radial-gradient(circle, #1a1a1a 0%, #000 100%);
+            background-image: url('https://www.transparenttextures.com/patterns/black-paper.png'); /* خلفية النجوم */
+        }
+
+        .logo { width: 150px; margin-bottom: 50px; filter: drop-shadow(0 0 10px rgba(255,255,255,0.5)); }
+
+        nav ul { list-style: none; text-align: center; }
+        nav ul li { margin: 20px 0; }
+        nav ul li a { 
+            text-decoration: none; color: #fff; font-size: 1.5rem; letter-spacing: 5px; 
+            transition: 0.3s; cursor: pointer; text-transform: uppercase;
+        }
+        nav ul li a:hover { color: #888; text-shadow: 0 0 15px white; }
+
+        .social-icons { position: absolute; bottom: 30px; display: flex; gap: 20px; font-size: 1.2rem; }
+
+        /* --- صفحة المنتجات (Catalog) --- */
+        #catalog-page {
+            display: none; padding: 50px 20px;
+            background: radial-gradient(circle at center, #333 0%, #000 100%);
             min-height: 100vh;
-            padding: 16px;
-            opacity: 1;
-            transition: opacity 0.25s ease;
         }
 
-        body.fade-out {
-            opacity: 0;
-        }
-
-        /* الشريط العلوي */
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            color: #ccc;
-            font-size: 18px;
-            letter-spacing: 1px;
-        }
-
-        .main-nav {
-            display: flex;
-            gap: 24px;
-            margin-bottom: 40px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 12px;
-        }
-
-        .main-nav a {
-            color: #888;
-            text-decoration: none;
-            font-size: 18px;
-            font-weight: 500;
-            transition: color 0.2s;
-        }
-
-        .main-nav a.active {
-            color: #fff;
-        }
-
-        /* الصفحات المخفية */
-        .page {
-            display: block;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        /* شبكة المنتجات */
-        .product-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+        .grid-container {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px; max-width: 1200px; margin: 0 auto;
         }
 
         .product-card {
-            background-color: #1a1a1a;
-            border-radius: 12px;
-            padding: 20px 12px;
-            text-decoration: none;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-            animation: pulse-glow 2s infinite ease-in-out;
-            transition: transform 0.2s;
-            border: 1px solid #333;
+            text-align: center; position: relative; cursor: pointer;
+            transition: transform 0.3s;
         }
 
-        .product-card:hover {
-            transform: scale(1.02);
+        /* تأثير التنفس */
+        @keyframes breathe {
+            0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); }
+            50% { transform: scale(1.05); filter: drop-shadow(0 0 25px rgba(255,255,255,0.5)); }
+            100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); }
         }
 
-        @keyframes pulse-glow {
-            0% { box-shadow: 0 0 5px #fffa, 0 0 10px #fffa; }
-            50% { box-shadow: 0 0 15px #fff, 0 0 30px #fffa; }
-            100% { box-shadow: 0 0 5px #fffa, 0 0 10px #fffa; }
+        .product-card img {
+            width: 100%; animation: breathe 4s ease-in-out infinite;
         }
 
-        .badge {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: #f77;
-            font-size: 14px;
-            font-weight: bold;
-            text-transform: uppercase;
+        .product-info { margin-top: 15px; }
+        .product-info h3 { font-size: 1.2rem; margin-bottom: 5px; }
+        .product-info p { color: #aaa; font-size: 0.9rem; }
+
+        .sold-out {
+            position: absolute; top: 10px; right: 10px;
+            background: rgba(255,255,255,0.8); color: #000;
+            padding: 2px 8px; font-size: 0.7rem; border-radius: 10px;
         }
 
-        .special-tag {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            color: #ffaa00;
-            font-weight: bold;
-            font-size: 20px;
+        /* --- صفحة تفاصيل المنتج (Product Details) --- */
+        #details-page {
+            display: none; padding: 100px 50px; min-height: 100vh;
+            background: radial-gradient(circle at left, #444 0%, #000 100%);
         }
 
-        .product-code {
-            font-size: 32px;
-            font-weight: 800;
-            margin: 15px 0 5px;
+        .details-container {
+            display: flex; align-items: center; justify-content: center; gap: 100px;
+            max-width: 1000px; margin: 0 auto;
         }
 
-        .product-price {
-            font-size: 16px;
-            color: #ddd;
-        }
+        .details-img img { width: 400px; animation: breathe 5s ease-in-out infinite; }
 
-        /* صفحة التفاصيل */
-        .detail-page {
-            padding-bottom: 30px;
-        }
+        .details-content { max-width: 400px; }
+        .details-content h1 { font-size: 3rem; margin-bottom: 10px; }
+        .details-content .price { font-size: 1.2rem; color: #ccc; margin-bottom: 30px; }
 
-        .product-title {
-            font-size: 28px;
-            font-weight: 600;
-            margin: 20px 0 5px;
-            color: #fff;
-            letter-spacing: 1px;
-        }
-
-        .detail-code {
-            font-size: 22px;
-            color: #aaa;
-            margin-bottom: 5px;
-        }
-
-        .detail-price {
-            font-size: 22px;
-            font-weight: 600;
-            color: #fff;
-            margin-bottom: 25px;
-        }
-
-        /* حاوية الصورة الدوارة */
-        .image-rotating {
-            width: 200px;
-            height: 200px;
-            margin: 20px auto;
-            border-radius: 50%;
-            overflow: hidden;
-            border: 2px solid #fffa;
-            box-shadow: 0 0 20px #fff3;
-            animation: rotate 10s linear infinite;
-        }
-
-        .image-rotating img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .size-selector, .quantity-selector {
-            margin: 25px 0;
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .size-selector span, .quantity-selector span {
-            font-size: 18px;
-            color: #ccc;
-            min-width: 70px;
-        }
-
-        .size-options {
-            display: flex;
-            gap: 15px;
-        }
-
+        .options { margin-bottom: 30px; }
         .size-btn {
-            background: transparent;
-            border: 2px solid #555;
-            color: white;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            font-size: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
+            background: none; border: 1px solid #fff; color: #fff;
+            padding: 10px 15px; margin-right: 10px; cursor: pointer; transition: 0.3s;
         }
-
-        .size-btn:hover, .size-btn.selected {
-            background-color: #fff;
-            color: #000;
-            border-color: #fff;
-        }
-
-        .quantity-selector input {
-            background: #222;
-            border: 1px solid #444;
-            color: white;
-            padding: 10px;
-            width: 80px;
-            border-radius: 8px;
-            font-size: 18px;
-            text-align: center;
-        }
+        .size-btn:hover, .size-btn.active { background: #fff; color: #000; }
 
         .add-to-cart {
-            background-color: #333;
-            color: white;
-            border: 2px solid #666;
-            padding: 16px 32px;
-            font-size: 20px;
-            font-weight: bold;
-            border-radius: 40px;
-            width: 100%;
-            margin-top: 30px;
-            cursor: pointer;
-            transition: 0.2s;
-            letter-spacing: 2px;
+            width: 100%; padding: 15px; background: #fff; color: #000;
+            border: none; font-weight: bold; cursor: pointer; text-transform: uppercase;
         }
 
-        .add-to-cart:hover {
-            background-color: #444;
-            border-color: #fff;
-        }
+        /* تأثيرات الانتقال */
+        .fade-in { animation: fadeIn 0.8s forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* الرجوع إلى الرئيسية */
-        .back-home {
-            color: #888;
-            margin-top: 20px;
-            text-align: center;
-            font-size: 16px;
-        }
-        .back-home a {
-            color: #ccc;
-            text-decoration: none;
-            border-bottom: 1px dashed #666;
-        }
-
-        /* إخفاء مؤقت */
-        .hidden {
-            display: none;
-        }
     </style>
 </head>
 <body>
-    <!-- الصفحة الرئيسية -->
-    <div id="home-page" class="page">
-        <div class="top-bar">
-            <span class="left-num">13</span>
-            <span class="right-time">6:35</span>
-        </div>
-        <nav class="main-nav">
-            <a href="#" class="active">HOME</a>
-            <a href="#">CATALOG</a>
-            <a href="#">CONTACT</a>
+
+    <div class="grainy-bg"></div>
+
+    <section id="home-page">
+        <img src="https://via.placeholder.com/150/ffffff/000000?text=LOGO" alt="Logo" class="logo">
+        <nav>
+            <ul>
+                <li><a onclick="showPage('catalog')">Catalog</a></li>
+                <li><a onclick="showPage('home')">Home</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
         </nav>
-
-        <main class="product-grid">
-            <!-- المنتج 1 -->
-            <a href="#" class="product-card" data-product="1">
-                <div class="badge sold-out">Sold out</div>
-                <div class="product-code">69</div>
-                <div class="product-price">LE 999.00 EGP</div>
-            </a>
-            <!-- المنتج 2 -->
-            <a href="#" class="product-card" data-product="2">
-                <div class="badge sold-out">Sold out</div>
-                <div class="product-code">69</div>
-                <div class="product-price">LE 999.00 EGP</div>
-            </a>
-            <!-- المنتج 3 مع NY -->
-            <a href="#" class="product-card" data-product="3">
-                <div class="badge sold-out">Sold out</div>
-                <div class="special-tag">NY</div>
-                <div class="product-code">69</div>
-                <div class="product-price">LE 999.00 EGP</div>
-            </a>
-            <!-- المنتج 4 -->
-            <a href="#" class="product-card" data-product="4">
-                <div class="badge sold-out">Sold out</div>
-                <div class="product-code">69</div>
-                <div class="product-price">LE 999,00 EGP</div>
-            </a>
-        </main>
-    </div>
-
-    <!-- صفحة تفاصيل المنتج (مخفية في البداية) -->
-    <div id="detail-page" class="page hidden">
-        <div class="top-bar">
-            <span class="left-num"></span>
-            <span class="right-time"></span>
+        <div class="social-icons">
+            <i class="fab fa-instagram"></i>
+            <i class="fab fa-tiktok"></i>
         </div>
-        <nav class="main-nav">
-            <a href="#" id="back-home-link">HOME</a>
-            <a href="#" class="active">UNIVERSITY</a>
-        </nav>
+    </section>
 
-        <main class="product-detail detail-page">
-            <h1 class="product-title">Ayegbe Capu</h1>
-            <div class="detail-code">69</div>
-            <div class="detail-price">LE 999.00 EGP</div>
-
-            <!-- الصورة الدوارة (يمكن تغيير الرابط هنا) -->
-            <div class="image-rotating">
-                <img src="https://via.placeholder.com/400/333333/ffffff?text=PRODUCT" alt="صورة المنتج" id="product-image">
-                <!-- استبدل الرابط أعلاه برابط الصورة المطلوب -->
-            </div>
-
-            <!-- اختيار المقاس -->
-            <div class="size-selector">
-                <span>Size</span>
-                <div class="size-options">
-                    <button class="size-btn">S</button>
-                    <button class="size-btn">M</button>
-                    <button class="size-btn">L</button>
+    <section id="catalog-page">
+        <div style="text-align: center; margin-bottom: 50px;">
+            <img src="https://via.placeholder.com/80" class="logo" style="width: 80px;" onclick="showPage('home')">
+        </div>
+        <div class="grid-container">
+            <div class="product-card" onclick="showDetails('69', 'LE 999.00 EGP', 'https://via.placeholder.com/300/222/fff?text=Hoodie+1')">
+                <span class="sold-out">Sold out</span>
+                <img src="https://via.placeholder.com/300/222/fff?text=Hoodie+1" alt="Product">
+                <div class="product-info">
+                    <h3>69</h3>
+                    <p>LE 999.00 EGP</p>
                 </div>
             </div>
-
-            <!-- الكمية -->
-            <div class="quantity-selector">
-                <span>Quantity</span>
-                <input type="number" value="1" min="1" max="10">
+            <div class="product-card" onclick="showDetails('70', 'LE 850.00 EGP', 'https://via.placeholder.com/300/222/fff?text=Hoodie+2')">
+                <img src="https://via.placeholder.com/300/222/fff?text=Hoodie+2" alt="Product">
+                <div class="product-info">
+                    <h3>70</h3>
+                    <p>LE 850.00 EGP</p>
+                </div>
             </div>
-
-            <!-- زر الشراء -->
-            <button class="add-to-cart">ADD TO CART</button>
-
-            <div class="back-home">
-                <a href="#" id="back-home-small">العودة إلى الرئيسية</a>
             </div>
-        </main>
-    </div>
+    </section>
+
+    <section id="details-page">
+        <div style="position: absolute; top: 20px; left: 20px; cursor: pointer;" onclick="showPage('catalog')">← Back</div>
+        <div class="details-container">
+            <div class="details-img">
+                <img id="main-product-img" src="" alt="">
+            </div>
+            <div class="details-content">
+                <h1 id="product-title">69</h1>
+                <p class="price" id="product-price">LE 999.00 EGP</p>
+                
+                <div class="options">
+                    <p>Size</p><br>
+                    <button class="size-btn">S</button>
+                    <button class="size-btn active">M</button>
+                    <button class="size-btn">L</button>
+                </div>
+
+                <button class="add-to-cart">Add to Cart</button>
+            </div>
+        </div>
+    </section>
 
     <script>
-        (function() {
-            const homePage = document.getElementById('home-page');
-            const detailPage = document.getElementById('detail-page');
-            const productCards = document.querySelectorAll('.product-card');
-            const backLinks = document.querySelectorAll('#back-home-link, #back-home-small');
-            const bodyEl = document.body;
+        function showPage(pageId) {
+            document.getElementById('home-page').style.display = 'none';
+            document.getElementById('catalog-page').style.display = 'none';
+            document.getElementById('details-page').style.display = 'none';
 
-            // وظيفة الانتقال إلى صفحة التفاصيل
-            function showDetail(event) {
-                event.preventDefault();
-                bodyEl.classList.add('fade-out');
-                setTimeout(() => {
-                    homePage.classList.add('hidden');
-                    detailPage.classList.remove('hidden');
-                    bodyEl.classList.remove('fade-out');
-                }, 250); // نفس مدة transition
-            }
+            const activePage = document.getElementById(pageId + '-page');
+            activePage.style.display = 'block';
+            activePage.classList.add('fade-in');
+        }
 
-            // وظيفة العودة إلى الرئيسية
-            function showHome(event) {
-                event.preventDefault();
-                bodyEl.classList.add('fade-out');
-                setTimeout(() => {
-                    detailPage.classList.add('hidden');
-                    homePage.classList.remove('hidden');
-                    bodyEl.classList.remove('fade-out');
-                }, 250);
-            }
-
-            // إضافة مستمعي الأحداث لبطاقات المنتجات
-            productCards.forEach(card => {
-                card.addEventListener('click', showDetail);
-            });
-
-            // إضافة مستمعي الأحداث لروابط العودة
-            backLinks.forEach(link => {
-                link.addEventListener('click', showHome);
-            });
-
-            // تجنب التمرير عند النقر على الروابط الفارغة
-            document.querySelectorAll('.main-nav a[href="#"]').forEach(link => {
-                link.addEventListener('click', (e) => e.preventDefault());
-            });
-
-            // تحديد زر المقاس (اختياري)
-            const sizeBtns = document.querySelectorAll('.size-btn');
-            sizeBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    sizeBtns.forEach(b => b.classList.remove('selected'));
-                    this.classList.add('selected');
-                });
-            });
-        })();
+        function showDetails(title, price, img) {
+            document.getElementById('product-title').innerText = title;
+            document.getElementById('product-price').innerText = price;
+            document.getElementById('main-product-img').src = img;
+            showPage('details');
+        }
     </script>
-
-    <!-- ملاحظة: لتغيير صورة المنتج، عدل رابط src داخل .image-rotating img -->
 </body>
 </html>
