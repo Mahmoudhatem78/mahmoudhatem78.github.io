@@ -1,277 +1,416 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="ltr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>X STORE</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>موقع المنتجات</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
+        body {
+            background-color: #0c0c0c;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 16px;
+            opacity: 1;
+            transition: opacity 0.25s ease;
+        }
 
-body{
-background:#000;
-color:#fff;
-overflow:hidden;
-}
+        body.fade-out {
+            opacity: 0;
+        }
 
-/* ===== الخلفية الضوئية ===== */
-.bg-light{
-position:fixed;
-width:100%;
-height:100%;
-background:
-radial-gradient(circle at center, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.9) 60%),
-url('https://grainy-gradients.vercel.app/noise.svg');
-background-size:cover;
-z-index:-2;
-}
+        /* الشريط العلوي */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            color: #ccc;
+            font-size: 18px;
+            letter-spacing: 1px;
+        }
 
-/* ===== الهيدر ===== */
-header{
-position:absolute;
-top:20px;
-width:100%;
-display:flex;
-justify-content:center;
-align-items:center;
-}
+        .main-nav {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 12px;
+        }
 
-.logo{
-width:70px;
-}
+        .main-nav a {
+            color: #888;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
 
-.icons{
-position:absolute;
-right:30px;
-display:flex;
-gap:20px;
-font-size:18px;
-opacity:0.7;
-}
+        .main-nav a.active {
+            color: #fff;
+        }
 
-/* ===== الصفحات ===== */
-.page{
-position:absolute;
-width:100%;
-height:100%;
-transition:0.6s ease;
-overflow-y:auto;
-padding-top:100px;
-}
+        /* الصفحات المخفية */
+        .page {
+            display: block;
+        }
 
-.hidden{
-transform:translateX(100%);
-opacity:0;
-pointer-events:none;
-}
+        .hidden {
+            display: none !important;
+        }
 
-/* ===== المنتجات ===== */
-.products{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:40px;
-padding:0 80px 100px;
-}
+        /* شبكة المنتجات */
+        .product-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
 
-.card{
-text-align:center;
-cursor:pointer;
-position:relative;
-animation: breathe 4s ease-in-out infinite;
-}
+        .product-card {
+            background-color: #1a1a1a;
+            border-radius: 12px;
+            padding: 20px 12px;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+            animation: pulse-glow 2s infinite ease-in-out;
+            transition: transform 0.2s;
+            border: 1px solid #333;
+        }
 
-@keyframes breathe{
-0%{transform:scale(1);}
-50%{transform:scale(1.03);}
-100%{transform:scale(1);}
-}
+        .product-card:hover {
+            transform: scale(1.02);
+        }
 
-.card img{
-width:100%;
-max-width:250px;
-filter:drop-shadow(0 0 25px rgba(255,255,255,0.2));
-}
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 5px #fffa, 0 0 10px #fffa; }
+            50% { box-shadow: 0 0 15px #fff, 0 0 30px #fffa; }
+            100% { box-shadow: 0 0 5px #fffa, 0 0 10px #fffa; }
+        }
 
-.price{
-margin-top:10px;
-font-size:14px;
-opacity:0.8;
-}
+        .badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #f77;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
 
-.badge{
-position:absolute;
-top:10px;
-left:50%;
-transform:translateX(-50%);
-background:#fff;
-color:#000;
-font-size:12px;
-padding:3px 8px;
-border-radius:20px;
-}
+        .special-tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #ffaa00;
+            font-weight: bold;
+            font-size: 20px;
+        }
 
-/* ===== التفاصيل ===== */
-.details{
-display:flex;
-justify-content:center;
-align-items:center;
-gap:100px;
-padding:0 100px;
-animation:fadeIn 0.8s ease;
-}
+        .product-code {
+            font-size: 32px;
+            font-weight: 800;
+            margin: 15px 0 5px;
+        }
 
-@keyframes fadeIn{
-from{opacity:0;transform:translateY(20px);}
-to{opacity:1;transform:translateY(0);}
-}
+        .product-price {
+            font-size: 16px;
+            color: #ddd;
+        }
 
-.details img{
-width:400px;
-filter:drop-shadow(0 0 30px rgba(255,255,255,0.2));
-animation:breathe 4s ease-in-out infinite;
-}
+        /* صفحة التفاصيل */
+        .detail-page {
+            padding-bottom: 30px;
+        }
 
-.info{
-max-width:400px;
-}
+        .product-title {
+            font-size: 28px;
+            font-weight: 600;
+            margin: 20px 0 5px;
+            color: #fff;
+            letter-spacing: 1px;
+        }
 
-.info h2{
-margin-bottom:10px;
-}
+        .detail-code {
+            font-size: 22px;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
 
-.sizes button{
-margin:5px;
-padding:6px 12px;
-background:transparent;
-border:1px solid #fff;
-color:#fff;
-cursor:pointer;
-border-radius:6px;
-}
+        .detail-price {
+            font-size: 22px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 25px;
+        }
 
-.qty{
-margin:10px 0;
-padding:6px;
-width:60px;
-background:#111;
-border:1px solid #555;
-color:#fff;
-}
+        /* حاوية الصورة الدوارة */
+        .image-rotating {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid #fffa;
+            box-shadow: 0 0 20px #fff3;
+            animation: rotate 10s linear infinite;
+        }
 
-.cart{
-margin-top:10px;
-padding:12px 30px;
-background:#000;
-border:1px solid #fff;
-color:#fff;
-border-radius:30px;
-cursor:pointer;
-transition:0.3s;
-}
+        .image-rotating img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
 
-.cart:hover{
-background:#fff;
-color:#000;
-}
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
 
-.back{
-margin-top:15px;
-cursor:pointer;
-opacity:0.6;
-}
+        .size-selector, .quantity-selector {
+            margin: 25px 0;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
 
-</style>
+        .size-selector span, .quantity-selector span {
+            font-size: 18px;
+            color: #ccc;
+            min-width: 70px;
+        }
+
+        .size-options {
+            display: flex;
+            gap: 15px;
+        }
+
+        .size-btn {
+            background: transparent;
+            border: 2px solid #555;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .size-btn:hover, .size-btn.selected {
+            background-color: #fff;
+            color: #000;
+            border-color: #fff;
+        }
+
+        .quantity-selector input {
+            background: #222;
+            border: 1px solid #444;
+            color: white;
+            padding: 10px;
+            width: 80px;
+            border-radius: 8px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .add-to-cart {
+            background-color: #333;
+            color: white;
+            border: 2px solid #666;
+            padding: 16px 32px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 40px;
+            width: 100%;
+            margin-top: 30px;
+            cursor: pointer;
+            transition: 0.2s;
+            letter-spacing: 2px;
+        }
+
+        .add-to-cart:hover {
+            background-color: #444;
+            border-color: #fff;
+        }
+
+        /* الرجوع إلى الرئيسية */
+        .back-home {
+            color: #888;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+        .back-home a {
+            color: #ccc;
+            text-decoration: none;
+            border-bottom: 1px dashed #666;
+        }
+
+        /* إخفاء مؤقت */
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
-
 <body>
+    <!-- الصفحة الرئيسية -->
+    <div id="home-page" class="page">
+        <div class="top-bar">
+            <span class="left-num">13</span>
+            <span class="right-time">6:35</span>
+        </div>
+        <nav class="main-nav">
+            <a href="#" class="active">HOME</a>
+            <a href="#">CATALOG</a>
+            <a href="#">CONTACT</a>
+        </nav>
 
-<div class="bg-light"></div>
+        <main class="product-grid">
+            <!-- المنتج 1 -->
+            <a href="#" class="product-card" data-product="1">
+                <div class="badge sold-out">Sold out</div>
+                <div class="product-code">69</div>
+                <div class="product-price">LE 999.00 EGP</div>
+            </a>
+            <!-- المنتج 2 -->
+            <a href="#" class="product-card" data-product="2">
+                <div class="badge sold-out">Sold out</div>
+                <div class="product-code">69</div>
+                <div class="product-price">LE 999.00 EGP</div>
+            </a>
+            <!-- المنتج 3 مع NY -->
+            <a href="#" class="product-card" data-product="3">
+                <div class="badge sold-out">Sold out</div>
+                <div class="special-tag">NY</div>
+                <div class="product-code">69</div>
+                <div class="product-price">LE 999.00 EGP</div>
+            </a>
+            <!-- المنتج 4 -->
+            <a href="#" class="product-card" data-product="4">
+                <div class="badge sold-out">Sold out</div>
+                <div class="product-code">69</div>
+                <div class="product-price">LE 999,00 EGP</div>
+            </a>
+        </main>
+    </div>
 
-<header>
-<img src="PUT_LOGO_LINK_HERE" class="logo">
-<div class="icons">
-🔍 👤 🛒
-</div>
-</header>
+    <!-- صفحة تفاصيل المنتج (مخفية في البداية) -->
+    <div id="detail-page" class="page hidden">
+        <div class="top-bar">
+            <span class="left-num"></span>
+            <span class="right-time"></span>
+        </div>
+        <nav class="main-nav">
+            <a href="#" id="back-home-link">HOME</a>
+            <a href="#" class="active">UNIVERSITY</a>
+        </nav>
 
-<!-- ===== الصفحة الرئيسية ===== -->
-<div class="page" id="homePage">
+        <main class="product-detail detail-page">
+            <h1 class="product-title">Ayegbe Capu</h1>
+            <div class="detail-code">69</div>
+            <div class="detail-price">LE 999.00 EGP</div>
 
-<div class="products">
+            <!-- الصورة الدوارة (يمكن تغيير الرابط هنا) -->
+            <div class="image-rotating">
+                <img src="https://via.placeholder.com/400/333333/ffffff?text=PRODUCT" alt="صورة المنتج" id="product-image">
+                <!-- استبدل الرابط أعلاه برابط الصورة المطلوب -->
+            </div>
 
-<div class="card" onclick="openProduct(1)">
-<div class="badge">Sold out</div>
-<img src="PUT_PRODUCT_IMAGE_1">
-<div>69</div>
-<div class="price">LE 999.00 EGP</div>
-</div>
+            <!-- اختيار المقاس -->
+            <div class="size-selector">
+                <span>Size</span>
+                <div class="size-options">
+                    <button class="size-btn">S</button>
+                    <button class="size-btn">M</button>
+                    <button class="size-btn">L</button>
+                </div>
+            </div>
 
-<div class="card" onclick="openProduct(2)">
-<img src="PUT_PRODUCT_IMAGE_2">
-<div>69</div>
-<div class="price">LE 999.00 EGP</div>
-</div>
+            <!-- الكمية -->
+            <div class="quantity-selector">
+                <span>Quantity</span>
+                <input type="number" value="1" min="1" max="10">
+            </div>
 
-<div class="card" onclick="openProduct(3)">
-<img src="PUT_PRODUCT_IMAGE_3">
-<div>69</div>
-<div class="price">LE 999.00 EGP</div>
-</div>
+            <!-- زر الشراء -->
+            <button class="add-to-cart">ADD TO CART</button>
 
-<div class="card" onclick="openProduct(4)">
-<img src="PUT_PRODUCT_IMAGE_4">
-<div>69</div>
-<div class="price">LE 999.00 EGP</div>
-</div>
+            <div class="back-home">
+                <a href="#" id="back-home-small">العودة إلى الرئيسية</a>
+            </div>
+        </main>
+    </div>
 
-</div>
-</div>
+    <script>
+        (function() {
+            const homePage = document.getElementById('home-page');
+            const detailPage = document.getElementById('detail-page');
+            const productCards = document.querySelectorAll('.product-card');
+            const backLinks = document.querySelectorAll('#back-home-link, #back-home-small');
+            const bodyEl = document.body;
 
-<!-- ===== صفحة التفاصيل ===== -->
-<div class="page hidden" id="detailsPage">
+            // وظيفة الانتقال إلى صفحة التفاصيل
+            function showDetail(event) {
+                event.preventDefault();
+                bodyEl.classList.add('fade-out');
+                setTimeout(() => {
+                    homePage.classList.add('hidden');
+                    detailPage.classList.remove('hidden');
+                    bodyEl.classList.remove('fade-out');
+                }, 250); // نفس مدة transition
+            }
 
-<div class="details">
+            // وظيفة العودة إلى الرئيسية
+            function showHome(event) {
+                event.preventDefault();
+                bodyEl.classList.add('fade-out');
+                setTimeout(() => {
+                    detailPage.classList.add('hidden');
+                    homePage.classList.remove('hidden');
+                    bodyEl.classList.remove('fade-out');
+                }, 250);
+            }
 
-<img id="detailsImg">
+            // إضافة مستمعي الأحداث لبطاقات المنتجات
+            productCards.forEach(card => {
+                card.addEventListener('click', showDetail);
+            });
 
-<div class="info">
-<h2>69</h2>
-<div class="price">LE 999.00 EGP</div>
+            // إضافة مستمعي الأحداث لروابط العودة
+            backLinks.forEach(link => {
+                link.addEventListener('click', showHome);
+            });
 
-<div>Size</div>
-<div class="sizes">
-<button>S</button>
-<button>M</button>
-<button>L</button>
-</div>
+            // تجنب التمرير عند النقر على الروابط الفارغة
+            document.querySelectorAll('.main-nav a[href="#"]').forEach(link => {
+                link.addEventListener('click', (e) => e.preventDefault());
+            });
 
-<div>Quantity</div>
-<input type="number" value="1" class="qty">
+            // تحديد زر المقاس (اختياري)
+            const sizeBtns = document.querySelectorAll('.size-btn');
+            sizeBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    sizeBtns.forEach(b => b.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+            });
+        })();
+    </script>
 
-<button class="cart">ADD TO CART</button>
-
-<div class="back" onclick="goBack()">← Back</div>
-</div>
-
-</div>
-</div>
-
-<script>
-
-function openProduct(id){
-document.getElementById("homePage").classList.add("hidden");
-document.getElementById("detailsPage").classList.remove("hidden");
-
-document.getElementById("detailsImg").src=
-document.querySelectorAll(".card img")[id-1].src;
-}
-
-function goBack(){
-document.getElementById("detailsPage").classList.add("hidden");
-document.getElementById("homePage").classList.remove("hidden");
-}
-
-</script>
-
+    <!-- ملاحظة: لتغيير صورة المنتج، عدل رابط src داخل .image-rotating img -->
 </body>
 </html>
